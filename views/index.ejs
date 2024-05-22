@@ -34,7 +34,7 @@
             <td><%= (currentPage - 1) * 50 + index + 1 %></td> <!-- Nomor urutan koin dengan penomoran berlanjut -->
             <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td> <!-- Nama koin dengan link ke halaman chart -->
             <td><%= coin.symbol %></td> <!-- Simbol koin -->
-            <td>$<%= coin.quote.USD.price.toFixed(2) %></td> <!-- Harga koin -->
+            <td>IDR<%= coin.quote.USD.price.toFixed(2) %></td> <!-- Harga koin -->
             <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td> <!-- Perubahan harga dalam 1 jam -->
             <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td> <!-- Perubahan harga dalam 24 jam -->
             <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td> <!-- Perubahan harga dalam 7 hari -->
