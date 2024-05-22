@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="/styles.css"> <!-- Menghubungkan file CSS untuk styling -->
 </head>
 <body>
+  <script type="text/javascript" src="https://files.coinmarketcap.com/static/widget/coinMarquee.js"></script>
+    <div id="coinmarketcap-widget-marquee" coins="1,1027,825,52,74,5994,512,24478" currency="USD" theme="dark" transparent="false" show-symbol-logo="true"></div>
   <h1>Crypto Dashboard</h1>
   <div class="container">
     <form>
@@ -29,7 +31,7 @@
       <tbody id="coinTableBody">
         <% coins.forEach((coin, index) => { %> <!-- Looping untuk setiap koin dalam daftar -->
           <tr>
-            <td><%= index + 1 %></td> <!-- Nomor urutan koin -->
+            <td><%= (currentPage - 1) * 50 + index + 1 %></td> <!-- Nomor urutan koin dengan penomoran berlanjut -->
             <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td> <!-- Nama koin dengan link ke halaman chart -->
             <td><%= coin.symbol %></td> <!-- Simbol koin -->
             <td>$<%= coin.quote.USD.price.toFixed(2) %></td> <!-- Harga koin -->
@@ -41,9 +43,9 @@
       </tbody>
     </table>
     <div class="pagination">
-        <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 1) * 50 || 0 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button> <!-- Tombol untuk halaman sebelumnya -->
-        <button onclick="window.location.href='/nextPage?start=<%= (currentPage + 1) * 50 || 0 %>'">Next Page</button> <!-- Tombol untuk halaman berikutnya -->       
-    </div>      
+      <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 2) * 50 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button> <!-- Tombol untuk halaman sebelumnya -->
+      <button onclick="window.location.href='/nextPage?start=<%= currentPage * 50 %>'">Next Page</button> <!-- Tombol untuk halaman berikutnya -->
+    </div>
   </div>
 
   <script>

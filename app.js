@@ -27,7 +27,8 @@ async function fetchCoins(start) {
       },
       params: {
         start: start, // Mengatur parameter untuk memulai dari indeks tertentu
-        limit: pageSize // Mengatur jumlah data yang akan diambil
+        limit: pageSize, // Mengatur jumlah data yang akan diambil
+        convert: 'IDR' // Mengatur mata uang konversi menjadi IDR
       }
     });
     return response.data.data; // Mengembalikan data koin dari response API
@@ -39,24 +40,43 @@ async function fetchCoins(start) {
 
 // Route untuk halaman utama dengan pagination
 app.get('/', async (req, res) => {
-    try {
-      let start = parseInt(req.query.start) || 1; // Mengambil nomor halaman dari query parameter
-      const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest', {
-        headers: {
-          'X-CMC_PRO_API_KEY': apiKey // Menggunakan API key dalam header request
-        },
-        params: {
-          start: start, // Mengatur parameter untuk memulai dari indeks tertentu
-          limit: 50 // Mengatur jumlah data yang akan diambil
-        }
-      });
-      const coins = response.data.data; // Mendapatkan data koin dari response API
-      const currentPage = Math.floor(start / 50) + 1; // Menghitung nomor halaman saat ini
-      res.render('index', { coins, currentPage }); // Merender halaman index.ejs dengan data koin dan nomor halaman saat ini
-    } catch (error) {
-      console.error(error); // Menangani error
-      res.status(500).send('Error fetching data from CoinMarketCap API'); // Mengirim status error 500
-    }
+  try {
+    let start = parseInt(req.query.start) || 0; // Mengambil start index dari query parameter
+    const coins = await fetchCoins(start); // Mendapatkan data koin
+    const currentPage = Math.floor(start / pageSize) + 1; // Menghitung halaman saat ini
+    res.render('index', { coins, currentPage }); // Merender halaman index dengan data koin dan halaman saat ini
+  } catch (error) {
+    console.error(error); // Menangani error
+    res.status(500).send('Error fetching data from CoinMarketCap API'); // Mengirim status error 500
+  }
+});
+
+// Route untuk halaman selanjutnya
+app.get('/nextPage', async (req, res) => {
+  try {
+    let start = parseInt(req.query.start) || 0;
+    start += pageSize; // Menambah start index dengan pageSize untuk mendapatkan halaman selanjutnya
+    const nextPageCoins = await fetchCoins(start);
+    const currentPage = Math.floor(start / pageSize) + 1;
+    res.render('index', { coins: nextPageCoins, currentPage });
+  } catch (error) {
+    console.error('Error navigating to next page:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Route untuk halaman sebelumnya
+app.get('/prevPage', async (req, res) => {
+  try {
+    let start = parseInt(req.query.start) || 0;
+    start = Math.max(start - pageSize, 0); // Mengurangi start index dengan pageSize untuk mendapatkan halaman sebelumnya
+    const prevPageCoins = await fetchCoins(start);
+    const currentPage = Math.floor(start / pageSize) + 1;
+    res.render('index', { coins: prevPageCoins, currentPage });
+  } catch (error) {
+    console.error('Error navigating to previous page:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 // Route untuk pencarian koin (belum diimplementasikan)
@@ -76,33 +96,6 @@ app.get('/search', async (req, res) => {
 app.get('/chart/:symbol', (req, res) => {
   const { symbol } = req.params; // Mendapatkan simbol koin dari parameter URL
   res.render('chart', { symbol }); // Merender halaman chart.ejs dengan simbol koin yang dipilih
-});
-
-// Route untuk halaman selanjutnya
-app.get('/nextPage', async (req, res) => {
-  try {
-    let start = parseInt(req.query.start) || 0; // Mendapatkan nomor halaman dari query parameter
-    const nextPageCoins = await fetchCoins(start); // Mendapatkan data koin untuk halaman selanjutnya
-    const currentPage = Math.floor(start / 50) + 1; // Menghitung nomor halaman saat ini
-    res.render('index', { coins: nextPageCoins, currentPage }); // Merender halaman index.ejs dengan data koin dan nomor halaman saat ini
-  } catch (error) {
-    console.error('Error navigating to next page:', error); // Menangani error saat navigasi ke halaman selanjutnya
-    res.status(500).send('Internal Server Error'); // Mengirim status error 500
-  }
-});
-
-// Route untuk halaman sebelumnya
-app.get('/prevPage', async (req, res) => {
-  try {
-    let start = parseInt(req.query.start) || 0; // Mendapatkan nomor halaman dari query parameter
-    let prevStart = Math.max(start - 50, 0); // Menghitung start index untuk halaman sebelumnya
-    const prevPageCoins = await fetchCoins(prevStart); // Mendapatkan data koin untuk halaman sebelumnya
-    const currentPage = Math.floor(start / 50); // Menghitung nomor halaman saat ini
-    res.render('index', { coins: prevPageCoins, currentPage }); // Merender halaman index.ejs dengan data koin dan nomor halaman saat ini
-  } catch (error) {
-    console.error('Error navigating to previous page:', error); // Menangani error saat navigasi ke halaman sebelumnya
-    res.status(500).send('Internal Server Error'); // Mengirim status error 500
-  }
 });
 
 // Memulai server
