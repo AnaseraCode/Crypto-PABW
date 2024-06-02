@@ -3,69 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crypto Dashboard</title>
-  <link rel="stylesheet" href="/styles.css"> <!-- Menghubungkan file CSS untuk styling -->
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/styles.css"> 
 </head>
 <body>
-  <script type="text/javascript" src="https://files.coinmarketcap.com/static/widget/coinMarquee.js"></script>
+  <div class="widget-container">
+    <script type="text/javascript" src="https://files.coinmarketcap.com/static/widget/coinMarquee.js"></script>
     <div id="coinmarketcap-widget-marquee" coins="1,1027,825,52,74,5994,512,24478" currency="USD" theme="dark" transparent="false" show-symbol-logo="true"></div>
-  <h1>Crypto Dashboard</h1>
+  </div>
+
+  <h1>Rayyanjul Currency</h1>
   <div class="container">
     <form>
       <div class="search-bar">
-        <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()"> <!-- Input untuk pencarian koin -->
+        <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()"> 
       </div>
     </form>
     <table>
       <thead>
         <tr>
-          <th>No</th> <!-- Kolom nomor -->
-          <th>Name</th> <!-- Kolom nama koin -->
-          <th>Symbol</th> <!-- Kolom simbol koin -->
-          <th>Price</th> <!-- Kolom harga koin -->
-          <th>1h %</th> <!-- Kolom perubahan harga dalam 1 jam -->
-          <th>24h %</th> <!-- Kolom perubahan harga dalam 24 jam -->
-          <th>7d %</th> <!-- Kolom perubahan harga dalam 7 hari -->
+          <th>No</th> 
+          <th>Name</th> 
+          <th>Symbol</th> 
+          <th>Price</th> 
+          <th>1h %</th> 
+          <th>24h %</th> 
+          <th>7d %</th> 
         </tr>
       </thead>
       <tbody id="coinTableBody">
-        <% coins.forEach((coin, index) => { %> <!-- Looping untuk setiap koin dalam daftar -->
+        <% coins.forEach((coin, index) => { %> 
           <tr>
-            <td><%= (currentPage - 1) * 50 + index + 1 %></td> <!-- Nomor urutan koin dengan penomoran berlanjut -->
-            <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td> <!-- Nama koin dengan link ke halaman chart -->
-            <td><%= coin.symbol %></td> <!-- Simbol koin -->
-            <td>IDR<%= coin.quote.USD.price.toFixed(2) %></td> <!-- Harga koin -->
-            <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td> <!-- Perubahan harga dalam 1 jam -->
-            <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td> <!-- Perubahan harga dalam 24 jam -->
-            <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td> <!-- Perubahan harga dalam 7 hari -->
+            <td><%= (currentPage - 1) * 50 + index + 1 %></td> 
+            <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td> 
+            <td><%= coin.symbol %></td> 
+            <td>$<%= coin.quote.USD.price.toFixed(2) %></td> 
+            <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %></td> 
+            <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %></td> 
+            <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %></td> 
           </tr>
         <% }); %>
       </tbody>
     </table>
     <div class="pagination">
-      <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 2) * 50 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button> <!-- Tombol untuk halaman sebelumnya -->
-      <button onclick="window.location.href='/nextPage?start=<%= currentPage * 50 %>'">Next Page</button> <!-- Tombol untuk halaman berikutnya -->
+      <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 2) * 50 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button> 
+      <button onclick="window.location.href='/nextPage?start=<%= currentPage * 50 %>'">Next Page</button> 
     </div>
   </div>
 
   <script>
-    // Sisipkan data koin sebagai string JSON
     const coinsData = '<%- JSON.stringify(coins) %>';
-    // Parse string JSON menjadi objek JavaScript
     const coins = JSON.parse(coinsData);
 
     function searchCoins() {
-      const searchQuery = document.getElementById('search').value.toLowerCase(); // Mendapatkan nilai dari input pencarian
+      const searchQuery = document.getElementById('search').value.toLowerCase(); 
       const filteredCoins = coins.filter(coin => 
         coin.name.toLowerCase().includes(searchQuery) || 
-        coin.symbol.toLowerCase().includes(searchQuery) // Mencocokkan koin dengan nama atau simbol yang cocok dengan input pencarian
+        coin.symbol.toLowerCase().includes(searchQuery) 
       );
 
-      const coinTableBody = document.getElementById('coinTableBody'); // Mengambil elemen tbody untuk menampilkan hasil pencarian
-      coinTableBody.innerHTML = ''; // Menghapus isi sebelumnya
+      const coinTableBody = document.getElementById('coinTableBody'); 
+      coinTableBody.innerHTML = ''; 
 
       filteredCoins.forEach((coin, index) => {
-        const row = document.createElement('tr'); // Membuat baris baru untuk setiap koin yang cocok
+        const row = document.createElement('tr'); 
         
         row.innerHTML = `
           <td>${index + 1}</td>
@@ -75,9 +76,9 @@
           <td>${coin.quote.USD.percent_change_1h.toFixed(2)} %</td>
           <td>${coin.quote.USD.percent_change_24h.toFixed(2)} %</td>
           <td>${coin.quote.USD.percent_change_7d.toFixed(2)} %</td>
-        `; // Menambahkan data koin yang cocok ke dalam tabel
+        `; 
         
-        coinTableBody.appendChild(row); // Menambahkan baris ke dalam tabel
+        coinTableBody.appendChild(row); 
       });
     }
   </script>

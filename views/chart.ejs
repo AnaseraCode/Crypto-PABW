@@ -8,25 +8,23 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #121212; /* Atur warna latar belakang menjadi #121212 */
+      background-color: #121212; 
     }
     h1 {
-      font-family: 'Poppins', sans-serif; /* Gunakan font Poppins */
-      font-weight: bold; /* Atur tebal font menjadi bold */
-      color: white; /* Atur warna teks judul menjadi putih */
-      text-align: center; /* Posisikan judul di tengah halaman */
+      font-family: 'Poppins', sans-serif; 
+      font-weight: bold; 
+      color: white; 
+      text-align: center; 
     }
     .tradingview-widget-container {
-      width: 100%; /* Atur lebar kontainer chart menjadi 100% */
+      width: 100%; 
     }
   </style>
 </head>
 <body>
-  <h1>Coin Chart: <%= symbol %></h1> <!-- Judul halaman dengan simbol koin yang ditampilkan -->
-  <!-- TradingView Widget BEGIN -->
+  <h1>Coin Chart: <%= symbol %></h1> 
   <div class="tradingview-widget-container">
     <div class="tradingview-widget-container__widget" style="height: calc(100vh - 72px);"></div>
-    <!-- Kontainer untuk chart, tingginya diatur agar mengambil tinggi viewport dikurangi 72px (tinggi judul) -->
     <div class="tradingview-widget-copyright">
       <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
         <span class="blue-text"></span>
@@ -34,26 +32,25 @@
     </div>
   </div>
   <script type="text/javascript">
-    var symbol = "<%= symbol %>"; // Mendapatkan simbol koin dari server
-    var script = document.createElement("script"); // Membuat elemen script
-    script.type = "text/javascript"; // Atur tipe script
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"; // Sumber script chart
-    script.async = true; // Atur agar script dijalankan secara asynchronous
+    var symbol = "<%= symbol %>"; 
+    var script = document.createElement("script"); 
+    script.type = "text/javascript"; 
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"; 
+    script.async = true; 
     script.innerHTML = JSON.stringify({
-      "autosize": true, // Atur agar ukuran chart menyesuaikan otomatis
-      "symbol": symbol, // Atur simbol koin yang akan ditampilkan di chart
-      "interval": "D", // Interval waktu (H = Hourly, D = Daily, W = Weekly, M = Monthly)
-      "timezone": "Etc/UTC", // Zona waktu chart
-      "theme": "dark", // Tema chart (dark/light)
-      "style": "1", // Gaya chart
-      "locale": "en", // Bahasa chart
-      "allow_symbol_change": true, // Izinkan perubahan simbol koin
-      "details": true, // Tampilkan detail chart
-      "calendar": false, // Sembunyikan kalender
-      "support_host": "https://www.tradingview.com" // Host dukungan TradingView
+      "autosize": true, 
+      "symbol": symbol, 
+      "interval": "D", 
+      "timezone": "Etc/UTC", 
+      "theme": "dark", 
+      "style": "1", 
+      "locale": "en", 
+      "allow_symbol_change": true, 
+      "details": true, 
+      "calendar": false, 
+      "support_host": "https://www.tradingview.com" 
     });
-    document.querySelector('.tradingview-widget-container__widget').appendChild(script); // Menambahkan script chart ke dalam kontainer
+    document.querySelector('.tradingview-widget-container__widget').appendChild(script); 
   </script>
-  <!-- TradingView Widget END -->
 </body>
 </html>

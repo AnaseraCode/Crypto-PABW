@@ -1,53 +1,51 @@
-// Import library dan setup lainnya
-const express = require('express'); // Import library Express.js untuk membuat server HTTP
-const axios = require('axios'); // Import library Axios untuk melakukan HTTP request
-const bodyParser = require('body-parser'); // Middleware untuk parsing body dari request
-const dotenv = require('dotenv'); // Modul untuk mengelola variabel lingkungan
+const express = require('express'); 
+const axios = require('axios'); 
+const bodyParser = require('body-parser'); 
+const dotenv = require('dotenv'); 
 
-dotenv.config(); // Menggunakan dotenv untuk mengelola variabel lingkungan
+dotenv.config(); 
 
-const app = express(); // Membuat instance dari aplikasi Express
-const port = 3000; // Port yang akan digunakan untuk server
-const apiKey = process.env.COINMARKETCAP_API_KEY; // Mendapatkan API key dari variabel lingkungan
+const app = express(); 
+const port = 3000; 
+const apiKey = process.env.COINMARKETCAP_API_KEY; 
 
-let coinsData = []; // Array untuk menyimpan data koin dari API
-let currentPage = 1; // Menyimpan nomor halaman yang sedang ditampilkan
-const pageSize = 50; // Jumlah data koin yang ditampilkan per halaman
+let coinsData = []; 
+let currentPage = 1; 
+const pageSize = 50; 
 
-app.set('view engine', 'ejs'); // Menggunakan EJS sebagai view engine
-app.use(express.static('public')); // Menyediakan file statis dari direktori 'public'
-app.use(bodyParser.urlencoded({ extended: true })); // Middleware untuk parsing body dari request
+app.set('view engine', 'ejs'); 
+app.use(express.static('public')); 
+app.use(bodyParser.urlencoded({ extended: true })); 
 
-// Fungsi untuk mendapatkan data koin dari CoinMarketCap API
 async function fetchCoins(start) {
   try {
     const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest', {
       headers: {
-        'X-CMC_PRO_API_KEY': apiKey // Menggunakan API key dalam header request
+        'X-CMC_PRO_API_KEY': apiKey 
       },
       params: {
-        start: start, // Mengatur parameter untuk memulai dari indeks tertentu
-        limit: pageSize, // Mengatur jumlah data yang akan diambil
-        convert: 'IDR' // Mengatur mata uang konversi menjadi IDR
+        start: start, 
+        limit: pageSize, 
+        convert: 'IDR' 
       }
     });
-    return response.data.data; // Mengembalikan data koin dari response API
+    return response.data.data; 
   } catch (error) {
-    console.error('Error fetching data from CoinMarketCap API:', error); // Menangani error saat fetching data dari API
-    throw new Error('Error fetching data from CoinMarketCap API'); // Mengembalikan pesan error
+    console.error('Error fetching data from CoinMarketCap API:', error); 
+    throw new Error('Error fetching data from CoinMarketCap API'); 
   }
 }
 
 // Route untuk halaman utama dengan pagination
 app.get('/', async (req, res) => {
   try {
-    let start = parseInt(req.query.start) || 0; // Mengambil start index dari query parameter
-    const coins = await fetchCoins(start); // Mendapatkan data koin
-    const currentPage = Math.floor(start / pageSize) + 1; // Menghitung halaman saat ini
-    res.render('index', { coins, currentPage }); // Merender halaman index dengan data koin dan halaman saat ini
+    let start = parseInt(req.query.start) || 0; 
+    const coins = await fetchCoins(start); 
+    const currentPage = Math.floor(start / pageSize) + 1; 
+    res.render('index', { coins, currentPage });
   } catch (error) {
-    console.error(error); // Menangani error
-    res.status(500).send('Error fetching data from CoinMarketCap API'); // Mengirim status error 500
+    console.error(error); 
+    res.status(500).send('Error fetching data from CoinMarketCap API'); 
   }
 });
 
