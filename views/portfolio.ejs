@@ -5,176 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portfolio</title>
   <link rel="stylesheet" href="/styles.css">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #121212;
-      color: white;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .portfolio-container {
-      max-width: 800px;
-      margin: auto;
-    }
-    .add-coin-form {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .add-coin-form input, .add-coin-form button {
-      padding: 10px;
-      margin: 5px;
-      border: none;
-      border-radius: 5px;
-    }
-    .add-coin-form input {
-      flex: 1;
-    }
-    .add-coin-form button {
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-    .add-coin-form button:hover {
-      background-color: #0056b3;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #333;
-    }
-  </style>
 </head>
 <body>
   <h1>Your Coin Portfolio</h1>
   <div class="portfolio-container">
     <div class="add-coin-form">
-      <input type="text" id="coinSymbol" placeholder="Enter coin symbol or name">
+      <input type="text" id="coinName" placeholder="Enter coin name">
       <input type="number" id="coinQuantity" placeholder="Enter quantity" min="0" step="any">
+      <input type="number" id="coinPrice" placeholder="Enter price per coin (IDR)" min="0" step="any">
       <button onclick="addCoin()">Add Coin</button>
     </div>
     <table>
       <thead>
         <tr>
           <th>Name</th>
-          <th>Symbol</th>
-          <th>Price (USD)</th>
           <th>Quantity</th>
-          <th>Total Value (USD)</th>
+          <th>Total Value (IDR)</th>
         </tr>
       </thead>
       <tbody id="portfolioTableBody">
         <!-- Rows will be added here dynamically -->
       </tbody>
     </table>
-
-    <h2>Buy List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Quantity</th>
-          <th>Price per Coin (USD)</th>
-          <th>Date and Time</th>
-          <th>Total Spent (USD)</th>
-        </tr>
-      </thead>
-      <tbody id="buyListBody">
-        <!-- Buy list rows will be added here dynamically -->
-      </tbody>
-    </table>
-
-    <h2>Sell List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Quantity</th>
-          <th>Price per Coin (USD)</th>
-          <th>Date and Time</th>
-          <th>Total Earned (USD)</th>
-        </tr>
-      </thead>
-      <tbody id="sellListBody">
-        <!-- Sell list rows will be added here dynamically -->
-      </tbody>
-    </table>
   </div>
 
   <script>
-    const coinData = {}; // This will store coin data fetched from the API
-    const buyList = [];
-    const sellList = [];
+    const portfolioData = [
+      { name: 'Bitcoin', quantity: 1.5, pricePerCoin: 250000000 },
+      { name: 'Ethereum', quantity: 10, pricePerCoin: 20000000 },
+    ];
 
-    async function fetchCoinData(symbol) {
-      try {
-        const response = await fetch(`http://localhost:3000/api/coin?symbol=${symbol}`, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        if (!response.ok) {
-          const errorDetail = await response.json();
-          console.error('Error fetching coin data:', errorDetail);
-          alert('Error fetching coin data: ' + (errorDetail.message || 'Unknown error'));
-          return null;
-        }
-        const data = await response.json();
-        return {
-          name: data.name,
-          symbol: data.symbol,
-          price: data.price
-        };
-      } catch (error) {
-        console.error('Error fetching coin data:', error);
-        alert('Error fetching coin data: ' + error.message);
-        return null;
-      }
+    function renderPortfolio() {
+      const tableBody = document.getElementById('portfolioTableBody');
+      tableBody.innerHTML = '';
+
+      portfolioData.forEach(coin => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${coin.name}</td>
+          <td>${coin.quantity}</td>
+          <td>Rp${(coin.quantity * coin.pricePerCoin).toLocaleString()}</td>
+        `;
+        tableBody.appendChild(row);
+      });
     }
-  
-    async function addCoin() {
-      const symbolOrName = document.getElementById('coinSymbol').value.trim().toUpperCase();
-      const quantity = parseFloat(document.getElementById('coinQuantity').value.trim());
-  
-      if (!symbolOrName || isNaN(quantity) || quantity <= 0) {
-        alert('Please enter valid coin symbol/name and quantity');
+
+    function addCoin() {
+      const coinName = document.getElementById('coinName').value.trim();
+      const coinQuantity = parseFloat(document.getElementById('coinQuantity').value.trim());
+      const coinPrice = parseFloat(document.getElementById('coinPrice').value.trim());
+
+      if (!coinName || isNaN(coinQuantity) || isNaN(coinPrice) || coinQuantity <= 0 || coinPrice <= 0) {
+        alert('Please enter valid coin name, quantity, and price per coin (IDR)');
         return;
       }
-  
-      if (!coinData[symbolOrName]) {
-        const coin = await fetchCoinData(symbolOrName);
-        if (coin) {
-          coinData[symbolOrName] = coin;
-        } else {
-          return;
-        }
-      }
-  
-      const coin = coinData[symbolOrName];
-      const totalValue = (coin.price * quantity).toFixed(2);
-  
-      const tableBody = document.getElementById('portfolioTableBody');
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${coin.name}</td>
-        <td>${coin.symbol}</td>
-        <td>$${coin.price.toFixed(2)}</td>
-        <td>${quantity}</td>
-        <td>$${totalValue}</td>
-      `;
-      tableBody.appendChild(row);
+
+      portfolioData.push({ name: coinName, quantity: coinQuantity, pricePerCoin: coinPrice });
+      renderPortfolio();
     }
-  </script>  
+
+    // Call the render function to display initial data
+    renderPortfolio();
+  </script>
 </body>
 </html>
