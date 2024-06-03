@@ -80,11 +80,43 @@
         <!-- Rows will be added here dynamically -->
       </tbody>
     </table>
+
+    <h2>Buy List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Quantity</th>
+          <th>Price per Coin (USD)</th>
+          <th>Date and Time</th>
+          <th>Total Spent (USD)</th>
+        </tr>
+      </thead>
+      <tbody id="buyListBody">
+        <!-- Buy list rows will be added here dynamically -->
+      </tbody>
+    </table>
+
+    <h2>Sell List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Quantity</th>
+          <th>Price per Coin (USD)</th>
+          <th>Date and Time</th>
+          <th>Total Earned (USD)</th>
+        </tr>
+      </thead>
+      <tbody id="sellListBody">
+        <!-- Sell list rows will be added here dynamically -->
+      </tbody>
+    </table>
   </div>
 
   <script>
     const coinData = {}; // This will store coin data fetched from the API
-  
+    const buyList = [];
+    const sellList = [];
+
     async function fetchCoinData(symbol) {
       try {
         const response = await fetch(`http://localhost:3000/api/coin?symbol=${symbol}`, {

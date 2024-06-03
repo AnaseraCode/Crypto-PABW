@@ -19,7 +19,7 @@
         <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()"> 
       </div>
       <div class="button-container">
-        <a href="/portfolio" class="button">Portfolio</a> <!-- Changed button to a link -->
+        <a href="/portfolio" class="button">Portfolio</a>
       </div>
     </form>
     <table>
@@ -28,7 +28,7 @@
           <th>No</th> 
           <th>Name</th> 
           <th>Symbol</th> 
-          <th>Price</th> 
+          <th>Price (IDR)</th> 
           <th>1h %</th> 
           <th>24h %</th> 
           <th>7d %</th> 
@@ -40,10 +40,10 @@
             <td><%= (currentPage - 1) * 50 + index + 1 %></td> 
             <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td> 
             <td><%= coin.symbol %></td> 
-            <td>$<%= coin.quote.USD.price.toFixed(2) %></td> 
-            <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %></td> 
-            <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %></td> 
-            <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %></td> 
+            <td>Rp<%= (coin.quote.USD.price * 16000).toFixed(2) %></td> 
+            <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td> 
+            <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td> 
+            <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td> 
           </tr>
         <% }); %>
       </tbody>
@@ -75,7 +75,7 @@
           <td>${index + 1}</td>
           <td><a href="/chart/${coin.symbol}">${coin.name}</a></td>
           <td>${coin.symbol}</td>
-          <td>$${coin.quote.USD.price.toFixed(2)}</td>
+          <td>Rp${(coin.quote.USD.price * 16000).toFixed(2)}</td>
           <td>${coin.quote.USD.percent_change_1h.toFixed(2)} %</td>
           <td>${coin.quote.USD.percent_change_24h.toFixed(2)} %</td>
           <td>${coin.quote.USD.percent_change_7d.toFixed(2)} %</td>
