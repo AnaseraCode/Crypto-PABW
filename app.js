@@ -1,21 +1,21 @@
 const express = require('express');
-const axios = require('axios'); 
-const bodyParser = require('body-parser'); 
-const dotenv = require('dotenv'); 
+const axios = require('axios');
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
 
-dotenv.config(); 
+dotenv.config();
 
-const app = express(); 
-const port = 3000; 
-const apiKey = process.env.COINMARKETCAP_API_KEY; 
+const app = express();
+const port = 3000;
+const apiKey = process.env.COINMARKETCAP_API_KEY;
 
-let coinsData = []; 
-let currentPage = 1; 
-const pageSize = 50; 
+let coinsData = [];
+let currentPage = 1;
+const pageSize = 50;
 
-app.set('view engine', 'ejs'); 
-app.use(express.static('public')); 
-app.use(bodyParser.urlencoded({ extended: true })); 
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 async function fetchCoins(start) {
   try {
@@ -95,6 +95,17 @@ app.get('/search', async (req, res) => {
 app.get('/chart/:symbol', (req, res) => {
   const { symbol } = req.params; // Mendapatkan simbol koin dari parameter URL
   res.render('chart', { symbol }); // Merender halaman chart.ejs dengan simbol koin yang dipilih
+});
+
+// Route untuk halaman portfolio
+app.get('/portfolio', (req, res) => {
+  // Example portfolio data
+  const portfolio = [
+    { name: 'Bitcoin', symbol: 'BTC', quantity: 2, avgPrice: 400000000 },
+    { name: 'Ethereum', symbol: 'ETH', quantity: 10, avgPrice: 30000000 },
+    { name: 'Ripple', symbol: 'XRP', quantity: 5000, avgPrice: 7000 }
+  ];
+  res.render('portfolio', { portfolio });
 });
 
 // Memulai server
