@@ -16,7 +16,13 @@
   <div class="container">
     <form>
       <div class="search-bar">
-        <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()"> 
+        <input type="text" id="search" placeholder="Search for a coin" oninput="filterCoins()"> 
+      </div>
+      <div class="price-filter">
+        <label for="minPrice">Min Price (IDR):</label>
+        <input type="number" id="minPrice" placeholder="0" oninput="filterCoins()">
+        <label for="maxPrice">Max Price (IDR):</label>
+        <input type="number" id="maxPrice" placeholder="0" oninput="filterCoins()">
       </div>
     </form>
     <table>
@@ -25,7 +31,7 @@
           <th>No</th> 
           <th>Name</th> 
           <th>Symbol</th> 
-          <th>Price</th> 
+          <th>Price (IDR)</th> 
           <th>1h %</th> 
           <th>24h %</th> 
           <th>7d %</th> 
@@ -37,7 +43,7 @@
             <td><%= (currentPage - 1) * 50 + index + 1 %></td> 
             <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td> 
             <td><%= coin.symbol %></td> 
-            <td>$<%= coin.quote.USD.price.toFixed(2) %></td> 
+            <td>Rp<%= (coin.quote.USD.price * 16000).toFixed(2) %></td> <!-- Assuming 1 USD = 16000 IDR -->
             <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %></td> 
             <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %></td> 
             <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %></td> 
@@ -52,33 +58,39 @@
   </div>
 
   <script>
+    const exchangeRate = 16000; // 1 USD to IDR conversion rate
     const coinsData = '<%- JSON.stringify(coins) %>';
     const coins = JSON.parse(coinsData);
 
-    function searchCoins() {
-      const searchQuery = document.getElementById('search').value.toLowerCase(); 
+    function filterCoins() {
+      const searchQuery = document.getElementById('search').value.toLowerCase();
+      const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+      const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+
       const filteredCoins = coins.filter(coin => 
-        coin.name.toLowerCase().includes(searchQuery) || 
-        coin.symbol.toLowerCase().includes(searchQuery) 
+        (coin.name.toLowerCase().includes(searchQuery) || 
+        coin.symbol.toLowerCase().includes(searchQuery)) &&
+        (coin.quote.USD.price * exchangeRate) >= minPrice &&
+        (coin.quote.USD.price * exchangeRate) <= maxPrice
       );
 
-      const coinTableBody = document.getElementById('coinTableBody'); 
-      coinTableBody.innerHTML = ''; 
+      const coinTableBody = document.getElementById('coinTableBody');
+      coinTableBody.innerHTML = '';
 
       filteredCoins.forEach((coin, index) => {
-        const row = document.createElement('tr'); 
-        
+        const row = document.createElement('tr');
+
         row.innerHTML = `
           <td>${index + 1}</td>
           <td><a href="/chart/${coin.symbol}">${coin.name}</a></td>
           <td>${coin.symbol}</td>
-          <td>$${coin.quote.USD.price.toFixed(2)}</td>
+          <td>Rp${(coin.quote.USD.price * exchangeRate).toFixed(2)}</td>
           <td>${coin.quote.USD.percent_change_1h.toFixed(2)} %</td>
           <td>${coin.quote.USD.percent_change_24h.toFixed(2)} %</td>
           <td>${coin.quote.USD.percent_change_7d.toFixed(2)} %</td>
-        `; 
-        
-        coinTableBody.appendChild(row); 
+        `;
+
+        coinTableBody.appendChild(row);
       });
     }
   </script>
