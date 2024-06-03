@@ -50,6 +50,7 @@ app.get('/', async (req, res) => {
   }
 });
 
+// Route untuk halaman selanjutnya
 app.get('/nextPage', async (req, res) => {
   try {
     let start = parseInt(req.query.start) || 1;
@@ -63,6 +64,7 @@ app.get('/nextPage', async (req, res) => {
   }
 });
 
+// Route untuk halaman sebelumnya
 app.get('/prevPage', async (req, res) => {
   try {
     let start = parseInt(req.query.start) || 1;
@@ -75,7 +77,6 @@ app.get('/prevPage', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
 
 // Route untuk pencarian koin (belum diimplementasikan)
 app.get('/search', async (req, res) => {
