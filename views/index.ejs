@@ -13,17 +13,22 @@
   </div>
 
   <h1>Rayyanjul Currency</h1>
-  <div class="button-container">
-    <button onclick="window.location.href='/portfolio'">Portfolio</button>
-  </div>
   <div class="container">
+    <form>
+      <div class="search-bar">
+        <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()"> 
+      </div>
+      <div class="button-container">
+        <a href="/portfolio" class="button">Portfolio</a> <!-- Changed button to a link -->
+      </div>
+    </form>
     <table>
       <thead>
         <tr>
           <th>No</th> 
           <th>Name</th> 
           <th>Symbol</th> 
-          <th>Price (IDR)</th> 
+          <th>Price</th> 
           <th>1h %</th> 
           <th>24h %</th> 
           <th>7d %</th> 
@@ -35,7 +40,7 @@
             <td><%= (currentPage - 1) * 50 + index + 1 %></td> 
             <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td> 
             <td><%= coin.symbol %></td> 
-            <td>Rp<%= (coin.quote.USD.price * 16000).toFixed(2) %></td> <!-- Assuming 1 USD = 16000 IDR -->
+            <td>$<%= coin.quote.USD.price.toFixed(2) %></td> 
             <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %></td> 
             <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %></td> 
             <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %></td> 
@@ -44,15 +49,41 @@
       </tbody>
     </table>
     <div class="pagination">
-      <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 2) * 50 + 1 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button>
-      <button onclick="window.location.href='/nextPage?start=<%= currentPage * 50 + 1 %>'">Next Page</button>
-    </div>  
+      <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 2) * 50 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button> 
+      <button onclick="window.location.href='/nextPage?start=<%= currentPage * 50 %>'">Next Page</button> 
+    </div>
   </div>
 
   <script>
-    const exchangeRate = 16000; // 1 USD to IDR conversion rate
     const coinsData = '<%- JSON.stringify(coins) %>';
     const coins = JSON.parse(coinsData);
+
+    function searchCoins() {
+      const searchQuery = document.getElementById('search').value.toLowerCase(); 
+      const filteredCoins = coins.filter(coin => 
+        coin.name.toLowerCase().includes(searchQuery) || 
+        coin.symbol.toLowerCase().includes(searchQuery) 
+      );
+
+      const coinTableBody = document.getElementById('coinTableBody'); 
+      coinTableBody.innerHTML = ''; 
+
+      filteredCoins.forEach((coin, index) => {
+        const row = document.createElement('tr'); 
+        
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td><a href="/chart/${coin.symbol}">${coin.name}</a></td>
+          <td>${coin.symbol}</td>
+          <td>$${coin.quote.USD.price.toFixed(2)}</td>
+          <td>${coin.quote.USD.percent_change_1h.toFixed(2)} %</td>
+          <td>${coin.quote.USD.percent_change_24h.toFixed(2)} %</td>
+          <td>${coin.quote.USD.percent_change_7d.toFixed(2)} %</td>
+        `; 
+        
+        coinTableBody.appendChild(row); 
+      });
+    }
   </script>
 </body>
 </html>
