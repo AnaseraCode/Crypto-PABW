@@ -1,4 +1,4 @@
-const express = require('express'); 
+const express = require('express');
 const axios = require('axios'); 
 const bodyParser = require('body-parser'); 
 const dotenv = require('dotenv'); 
@@ -19,43 +19,43 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 async function fetchCoins(start) {
   try {
+    start = Math.max(start, 1); // Ensure start is at least 1
     const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest', {
       headers: {
-        'X-CMC_PRO_API_KEY': apiKey 
+        'X-CMC_PRO_API_KEY': process.env.COINMARKETCAP_API_KEY
       },
       params: {
-        start: start, 
-        limit: pageSize, 
-        convert: 'IDR' 
+        start: start,
+        limit: pageSize,
+        convert: 'USD'
       }
     });
-    return response.data.data; 
+    return response.data.data;
   } catch (error) {
-    console.error('Error fetching data from CoinMarketCap API:', error); 
-    throw new Error('Error fetching data from CoinMarketCap API'); 
+    console.error('Error fetching data from CoinMarketCap API:', error.response ? error.response.data : error.message);
+    throw new Error('Error fetching data from CoinMarketCap API');
   }
 }
 
 // Route untuk halaman utama dengan pagination
 app.get('/', async (req, res) => {
   try {
-    let start = parseInt(req.query.start) || 0; 
-    const coins = await fetchCoins(start); 
-    const currentPage = Math.floor(start / pageSize) + 1; 
+    let start = parseInt(req.query.start) || 1; // Ensure the start parameter is at least 1
+    const coins = await fetchCoins(start);
+    const currentPage = Math.floor((start - 1) / pageSize) + 1;
     res.render('index', { coins, currentPage });
   } catch (error) {
-    console.error(error); 
-    res.status(500).send('Error fetching data from CoinMarketCap API'); 
+    console.error(error);
+    res.status(500).send('Error fetching data from CoinMarketCap API');
   }
 });
 
-// Route untuk halaman selanjutnya
 app.get('/nextPage', async (req, res) => {
   try {
-    let start = parseInt(req.query.start) || 0;
-    start += pageSize; // Menambah start index dengan pageSize untuk mendapatkan halaman selanjutnya
+    let start = parseInt(req.query.start) || 1;
+    start += pageSize;
     const nextPageCoins = await fetchCoins(start);
-    const currentPage = Math.floor(start / pageSize) + 1;
+    const currentPage = Math.floor((start - 1) / pageSize) + 1;
     res.render('index', { coins: nextPageCoins, currentPage });
   } catch (error) {
     console.error('Error navigating to next page:', error);
@@ -63,19 +63,19 @@ app.get('/nextPage', async (req, res) => {
   }
 });
 
-// Route untuk halaman sebelumnya
 app.get('/prevPage', async (req, res) => {
   try {
-    let start = parseInt(req.query.start) || 0;
-    start = Math.max(start - pageSize, 0); // Mengurangi start index dengan pageSize untuk mendapatkan halaman sebelumnya
+    let start = parseInt(req.query.start) || 1;
+    start = Math.max(start - pageSize, 1); // Ensure start is at least 1
     const prevPageCoins = await fetchCoins(start);
-    const currentPage = Math.floor(start / pageSize) + 1;
+    const currentPage = Math.floor((start - 1) / pageSize) + 1;
     res.render('index', { coins: prevPageCoins, currentPage });
   } catch (error) {
     console.error('Error navigating to previous page:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 // Route untuk pencarian koin (belum diimplementasikan)
 app.get('/search', async (req, res) => {
