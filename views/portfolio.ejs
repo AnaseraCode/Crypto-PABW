@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <h1>Your Coin Portfolio</h1>
+  <div class="portfolio-container">
+    <table>
+      <thead>
+        <tr>
+          <th>No</th> 
+          <th>Name</th> 
+          <th>Symbol</th> 
+          <th>Quantity</th> 
+          <th>Average Price (IDR)</th> 
+          <th>Total Value (IDR)</th> 
+        </tr>
+      </thead>
+      <tbody id="portfolioTableBody">
+        <% portfolio.forEach((coin, index) => { %> 
+          <tr>
+            <td><%= index + 1 %></td> 
+            <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td> 
+            <td><%= coin.symbol %></td> 
+            <td><%= coin.quantity %></td> 
+            <td>Rp<%= coin.avgPrice.toFixed(2) %></td> 
+            <td>Rp<%= (coin.quantity * coin.avgPrice).toFixed(2) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
