@@ -19,6 +19,7 @@
         <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()"> 
       </div>
       <div class="button-container">
+        <a href="/monitor?coins=<%= coins.map(coin => coin.symbol).join(',') %>" class="button">Monitor</a>
         <a href="/portfolio" class="button">Portfolio</a>
       </div>
     </form>
@@ -32,6 +33,7 @@
           <th>1h %</th> 
           <th>24h %</th> 
           <th>7d %</th> 
+          <th>Monitor</th>
         </tr>
       </thead>
       <tbody id="coinTableBody">
@@ -44,6 +46,7 @@
             <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td> 
             <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td> 
             <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td> 
+            <td><input type="checkbox" name="selectedCoins" value="<%= coin.symbol %>"></td> <!-- Checkbox added here -->
           </tr>
         <% }); %>
       </tbody>
