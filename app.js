@@ -78,17 +78,10 @@ app.get('/prevPage', async (req, res) => {
   }
 });
 
-// Route untuk pencarian koin (belum diimplementasikan)
-app.get('/search', async (req, res) => {
-  const searchString = req.query.q; // Mendapatkan query pencarian dari query parameter
-  try {
-    // Logic untuk mencari koin berdasarkan searchString
-    // Contoh: const searchResults = await searchCoins(searchString);
-    // res.json(searchResults);
-  } catch (error) {
-    console.error('Error searching coins:', error); // Menangani error saat mencari koin
-    res.status(500).json({ error: 'Internal Server Error' }); // Mengirim status error 500
-  }
+// Route untuk halaman monitor
+app.get('/monitor', (req, res) => {
+  const selectedCoins = req.query.coins ? req.query.coins.split(',') : [];
+  res.render('monitor', { selectedCoins });
 });
 
 // Route untuk halaman chart dengan simbol koin tertentu
@@ -101,7 +94,8 @@ app.get('/chart/:symbol', (req, res) => {
 app.get('/portfolio', (req, res) => {
   // Example portfolio data
   const portfolio = [
-    { name: 'Bitcoin', symbol: 'BTC', quantity: 2, avgPrice: 400000000 },
+    { name: 'Bitcoin', symbol: 'BTC', quantity: 2, avgPrice:
+    400000000 },
     { name: 'Ethereum', symbol: 'ETH', quantity: 10, avgPrice: 30000000 },
     { name: 'Ripple', symbol: 'XRP', quantity: 5000, avgPrice: 7000 }
   ];
