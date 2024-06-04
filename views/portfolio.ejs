@@ -20,7 +20,8 @@
         <tr>
           <th>Name</th>
           <th>Quantity</th>
-          <th>Total Value (IDR)</th>
+          <th>Purchase Value (IDR)</th>
+          <th>Current Value (IDR)</th>
         </tr>
       </thead>
       <tbody id="portfolioTableBody">
@@ -29,10 +30,15 @@
     </table>
   </div>
 
+  <div id="chart-container">
+    <div id="tradingview-widget"></div>
+  </div>
+
+  <script src="https://s3.tradingview.com/tv.js"></script>
   <script>
     const portfolioData = [
-      { name: 'Bitcoin', quantity: 1.5, pricePerCoin: 250000000 },
-      { name: 'Ethereum', quantity: 10, pricePerCoin: 20000000 },
+      { name: 'Bitcoin', quantity: 1.5, pricePerCoin: 250000000, currentPrice: 350000000 },
+      { name: 'Ethereum', quantity: 10, pricePerCoin: 20000000, currentPrice: 30000000 },
     ];
 
     function renderPortfolio() {
@@ -45,9 +51,12 @@
           <td>${coin.name}</td>
           <td>${coin.quantity}</td>
           <td>Rp${(coin.quantity * coin.pricePerCoin).toLocaleString()}</td>
+          <td>Rp${(coin.quantity * coin.currentPrice).toLocaleString()}</td>
         `;
         tableBody.appendChild(row);
       });
+
+      renderTradingViewWidget();
     }
 
     function addCoin() {
@@ -60,8 +69,33 @@
         return;
       }
 
-      portfolioData.push({ name: coinName, quantity: coinQuantity, pricePerCoin: coinPrice });
+      const currentPrice = prompt('Enter current price per coin (IDR) for ' + coinName);
+
+      if (isNaN(currentPrice) || currentPrice <= 0) {
+        alert('Please enter a valid current price per coin (IDR)');
+        return;
+      }
+
+      portfolioData.push({ name: coinName, quantity: coinQuantity, pricePerCoin: coinPrice, currentPrice: parseFloat(currentPrice) });
       renderPortfolio();
+    }
+
+    function renderTradingViewWidget() {
+      const symbols = portfolioData.map(coin => `COINBASE:${coin.name.toUpperCase()}USD`);
+      const symbolsStr = symbols.join(',');
+
+      new TradingView.MediumWidget({
+        container_id: 'tradingview-widget',
+        symbols: symbolsStr,
+        greyText: 'Quote list',
+        gridLineColor: '#e9e9ea',
+        fontColor: '#83888D',
+        underLineColor: '#dbeffb',
+        trendLineColor: '#4bafe9',
+        width: '100%',
+        height: 500,
+        locale: 'en'
+      });
     }
 
     // Call the render function to display initial data
