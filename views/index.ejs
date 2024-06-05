@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-  <link rel="stylesheet" href="/styles.css"> 
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <div class="widget-container">
@@ -14,66 +14,65 @@
 
   <h1>Rayyanjul Currency</h1>
   <div class="container">
-    <form>
+    <form id="monitorForm" action="/monitor" method="get">
       <div class="search-bar">
-        <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()"> 
+        <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()">
       </div>
       <div class="button-container">
-        <a href="/monitor?coins=<%= coins.map(coin => coin.symbol).join(',') %>" class="button">Monitor</a>
+        <button type="submit" class="button">Monitor</button>
         <a href="/portfolio" class="button">Portfolio</a>
       </div>
-    </form>
+    </form>    
     <table>
       <thead>
         <tr>
-          <th>No</th> 
-          <th>Name</th> 
-          <th>Symbol</th> 
-          <th>Price (IDR)</th> 
-          <th>1h %</th> 
-          <th>24h %</th> 
-          <th>7d %</th> 
+          <th>No</th>
+          <th>Name</th>
+          <th>Symbol</th>
+          <th>Price (IDR)</th>
+          <th>1h %</th>
+          <th>24h %</th>
+          <th>7d %</th>
           <th>Monitor</th>
         </tr>
       </thead>
       <tbody id="coinTableBody">
-        <% coins.forEach((coin, index) => { %> 
+        <% coins.forEach((coin, index) => { %>
           <tr>
-            <td><%= (currentPage - 1) * 50 + index + 1 %></td> 
-            <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td> 
-            <td><%= coin.symbol %></td> 
-            <td>Rp<%= (coin.quote.USD.price * 16000).toFixed(2) %></td> 
-            <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td> 
-            <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td> 
-            <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td> 
-            <td><input type="checkbox" name="selectedCoins" value="<%= coin.symbol %>"></td> <!-- Checkbox added here -->
+            <td><%= (currentPage - 1) * 50 + index + 1 %></td>
+            <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td>
+            <td><%= coin.symbol %></td>
+            <td>Rp<%= (coin.quote.USD.price * 16000).toFixed(2) %></td>
+            <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td>
+            <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td>
+            <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td>
+            <td><input type="checkbox" name="selectedCoins" value="<%= coin.symbol %>"></td>
           </tr>
         <% }); %>
       </tbody>
     </table>
     <div class="pagination">
-      <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 2) * 50 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button> 
-      <button onclick="window.location.href='/nextPage?start=<%= currentPage * 50 %>'">Next Page</button> 
+      <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 2) * 50 + 1 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button>
+      <button onclick="window.location.href='/nextPage?start=<%= currentPage * 50 + 1 %>'">Next Page</button>
     </div>
   </div>
 
   <script>
     const coinsData = '<%- JSON.stringify(coins) %>';
     const coins = JSON.parse(coinsData);
-
+  
     function searchCoins() {
-      const searchQuery = document.getElementById('search').value.toLowerCase(); 
-      const filteredCoins = coins.filter(coin => 
-        coin.name.toLowerCase().includes(searchQuery) || 
-        coin.symbol.toLowerCase().includes(searchQuery) 
+      const searchQuery = document.getElementById('search').value.toLowerCase();
+      const filteredCoins = coins.filter(coin =>
+        coin.name.toLowerCase().includes(searchQuery) ||
+        coin.symbol.toLowerCase().includes(searchQuery)
       );
-
-      const coinTableBody = document.getElementById('coinTableBody'); 
-      coinTableBody.innerHTML = ''; 
-
+  
+      const coinTableBody = document.getElementById('coinTableBody');
+      coinTableBody.innerHTML = '';
+  
       filteredCoins.forEach((coin, index) => {
-        const row = document.createElement('tr'); 
-        
+        const row = document.createElement('tr');
         row.innerHTML = `
           <td>${index + 1}</td>
           <td><a href="/chart/${coin.symbol}">${coin.name}</a></td>
@@ -82,11 +81,26 @@
           <td>${coin.quote.USD.percent_change_1h.toFixed(2)} %</td>
           <td>${coin.quote.USD.percent_change_24h.toFixed(2)} %</td>
           <td>${coin.quote.USD.percent_change_7d.toFixed(2)} %</td>
-        `; 
-        
-        coinTableBody.appendChild(row); 
+          <td><input type="checkbox" name="selectedCoins" value="${coin.symbol}"></td>
+        `;
+        coinTableBody.appendChild(row);
       });
     }
-  </script>
+  
+    document.getElementById('monitorForm').addEventListener('submit', function(event) {
+      const selectedCoins = Array.from(document.querySelectorAll('input[name="selectedCoins"]:checked'))
+                                .map(input => input.value);
+      if (selectedCoins.length > 6) {
+        event.preventDefault();
+        alert('You can select a maximum of 6 coins.');
+      } else {
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = 'selectedCoins';
+        hiddenField.value = selectedCoins.join(',');
+        this.appendChild(hiddenField);
+      }
+    });
+  </script>  
 </body>
 </html>

@@ -9,20 +9,19 @@ const app = express();
 const port = 3000;
 const apiKey = process.env.COINMARKETCAP_API_KEY;
 
-let coinsData = [];
-let currentPage = 1;
 const pageSize = 50;
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 async function fetchCoins(start) {
   try {
     start = Math.max(start, 1); // Ensure start is at least 1
     const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest', {
       headers: {
-        'X-CMC_PRO_API_KEY': process.env.COINMARKETCAP_API_KEY
+        'X-CMC_PRO_API_KEY': apiKey
       },
       params: {
         start: start,
@@ -55,9 +54,9 @@ app.get('/nextPage', async (req, res) => {
   try {
     let start = parseInt(req.query.start) || 1;
     start += pageSize;
-    const nextPageCoins = await fetchCoins(start);
+    const coins = await fetchCoins(start);
     const currentPage = Math.floor((start - 1) / pageSize) + 1;
-    res.render('index', { coins: nextPageCoins, currentPage });
+    res.render('index', { coins, currentPage });
   } catch (error) {
     console.error('Error navigating to next page:', error);
     res.status(500).send('Internal Server Error');
@@ -69,9 +68,9 @@ app.get('/prevPage', async (req, res) => {
   try {
     let start = parseInt(req.query.start) || 1;
     start = Math.max(start - pageSize, 1); // Ensure start is at least 1
-    const prevPageCoins = await fetchCoins(start);
+    const coins = await fetchCoins(start);
     const currentPage = Math.floor((start - 1) / pageSize) + 1;
-    res.render('index', { coins: prevPageCoins, currentPage });
+    res.render('index', { coins, currentPage });
   } catch (error) {
     console.error('Error navigating to previous page:', error);
     res.status(500).send('Internal Server Error');
@@ -80,8 +79,13 @@ app.get('/prevPage', async (req, res) => {
 
 // Route untuk halaman monitor
 app.get('/monitor', (req, res) => {
-  const selectedCoins = req.query.coins ? req.query.coins.split(',') : [];
-  res.render('monitor', { selectedCoins });
+  try {
+    const selectedCoins = req.query.selectedCoins ? req.query.selectedCoins.split(',') : [];
+    res.render('monitor', { selectedCoins });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 // Route untuk halaman chart dengan simbol koin tertentu
@@ -94,8 +98,7 @@ app.get('/chart/:symbol', (req, res) => {
 app.get('/portfolio', (req, res) => {
   // Example portfolio data
   const portfolio = [
-    { name: 'Bitcoin', symbol: 'BTC', quantity: 2, avgPrice:
-    400000000 },
+    { name: 'Bitcoin', symbol: 'BTC', quantity: 2, avgPrice: 400000000 },
     { name: 'Ethereum', symbol: 'ETH', quantity: 10, avgPrice: 30000000 },
     { name: 'Ripple', symbol: 'XRP', quantity: 5000, avgPrice: 7000 }
   ];

@@ -148,3 +148,9 @@ td:nth-child(2) a:hover {
 .chart-widget {
   width: 30%; /* Sesuaikan lebar widget sesuai kebutuhan */
 }
+.monitor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  margin: 20px;
+}

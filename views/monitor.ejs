@@ -3,23 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monitor</title>
+  <title>Monitor Pantau Coin</title>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <h1>Monitor</h1>
-  <div class="charts-container">
-    <div class="chart-row">
-      <!-- Widgets untuk 3 koin pertama -->
-      <% for(let i=0; i<3; i++) { %>
-        <div class="chart-widget" id="chart_<%= selectedCoins[i] %>"></div>
-      <% } %>
-    </div>
-    <div class="chart-row">
-      <!-- Widgets untuk 3 koin berikutnya -->
-      <% for(let i=3; i<6; i++) { %>
-        <div class="chart-widget" id="chart_<%= selectedCoins[i] %>"></div>
-      <% } %>
-    </div>
-  </div>
+  <div class="widget-grid">
+    <% selectedCoins.forEach((symbol, index) => { %>
+      <div class="widget-container">
+        <!-- TradingView Widget BEGIN -->
+        <div class="tradingview-widget-container" style="height:100%;width:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+          <div class="tradingview-widget-copyright">
+            <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"></a>
+          </div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+          ({
+            "autosize": true,
+            "symbol": "COINBASE:<%= symbol %>",
+            "interval": "30",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "allow_symbol_change": true,
+            "calendar": false,
+            "support_host": "https://www.tradingview.com"
+          })
+          </script>
+        </div>
+        <!-- TradingView Widget END -->
+      </div>
+    <% }); %>
+  </div>  
 </body>
 </html>
+
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .widget-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  .widget-container {
+    height: 100%;
+    width: 100%;
+  }
+
+  .tradingview-widget-container {
+    height: 100%;
+    width: 100%;
+  }
+
+  .tradingview-widget-container__widget {
+    height: calc(100% - 32px);
+    width: 100%;
+  }
+</style>
