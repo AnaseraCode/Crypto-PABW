@@ -93,7 +93,7 @@
           <div class="tradingview-widget-container__widget"></div>
           <div class="tradingview-widget-copyright">
             <a href="https://id.tradingview.com/" rel="noopener nofollow" target="_blank">
-              <span class="blue-text">Lacak seluruh pasar di TradingView</span>
+              <span class="blue-text"></span>
             </a>
           </div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
@@ -115,7 +115,7 @@
           <div class="tradingview-widget-container__widget"></div>
           <div class="tradingview-widget-copyright">
             <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
-              <span class="blue-text">Track all markets on TradingView</span>
+              <span class="blue-text"></span>
             </a>
           </div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
@@ -286,16 +286,15 @@
     </div>
   </div>
 
-  <div class="container">
-    <form id="monitorForm" action="/monitor" method="get">
-      <div class="search-bar">
-        <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()">
-      </div>
-      <div class="button-container">
-        <button type="submit" class="button">Monitor</button>
-        <a href="/portfolio" class="button">Portfolio</a>
-      </div>
-    </form>
+  <form id="monitorForm" method="get">
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()">
+    </div>
+    <div class="button-container">
+      <a href="/watchlist" class="button">Watchlist</a>
+      <a href="/portfolio" class="button">Portfolio</a>
+    </div>
+  </form>  
     
     <table>
       <thead>
@@ -375,6 +374,10 @@
         this.appendChild(hiddenField);
       }
     });
+
+    function redirectToWatchlist() {
+      window.location.href = '/watchlist';
+    }
   </script>  
 </body>
 </html>

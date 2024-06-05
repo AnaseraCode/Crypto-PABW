@@ -36,6 +36,19 @@ async function fetchCoins(start) {
   }
 }
 
+// Define a route for the watchlist page
+app.get('/watchlist', (req, res) => {
+  // You'll need to provide the data for 'watchlistCoins' from your database or any data source
+  const watchlistCoins = [
+      // Example data structure
+      { name: 'Bitcoin', symbol: 'BTC', quote: { USD: { price: 40000, percent_change_1h: 0.1, percent_change_24h: -0.2, percent_change_7d: 1.5 } } },
+      { name: 'Ethereum', symbol: 'ETH', quote: { USD: { price: 2500, percent_change_1h: 0.3, percent_change_24h: 0.4, percent_change_7d: 2.0 } } }
+  ];
+
+  // Render the watchlist page with the coins data
+  res.render('watchlist', { watchlistCoins });
+});
+
 // Route untuk halaman utama dengan pagination
 app.get('/', async (req, res) => {
   try {
@@ -73,19 +86,6 @@ app.get('/prevPage', async (req, res) => {
     res.render('index', { coins, currentPage });
   } catch (error) {
     console.error('Error navigating to previous page:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-// Route untuk halaman monitor
-app.get('/monitor', async (req, res) => {
-  try {
-    const selectedCoins = req.query.selected_coins ? req.query.selected_coins.split(',') : [];
-    // Panggil fungsi fetchCoins untuk mendapatkan data koin terkait
-    const coins = await fetchCoins(selectedCoins.join(',')); // Mengambil data koin berdasarkan simbol yang dipilih
-    res.render('monitor', { coins });
-  } catch (error) {
-    console.error('Error fetching coins data for monitor:', error);
     res.status(500).send('Internal Server Error');
   }
 });

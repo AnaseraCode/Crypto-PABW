@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watchlist</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      background-color: #141E30; 
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .widget-container {
+      display: flex;
+      flex-direction: column; /* Maintain column layout for overall container */
+      align-items: center;
+      padding: 20px;
+    }
+    table {
+      width: 90%;
+      border-collapse: collapse;
+      margin: auto; /* Center the table */
+      margin-top: 20px;
+      background-color: #1E293B;
+      border-radius: 8px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #3B4252;
+    }
+    tr:nth-child(even) {
+      background-color: #2E3440;
+    }
+    .button {
+      background-color: #4C566A;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #5E81AC;
+    }
+  </style>
+</head>
+<body>
+  <div class="widget-container">
+    <h1>Watchlist</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Name</th>
+          <th>Symbol</th>
+          <th>Price (IDR)</th>
+          <th>1h %</th>
+          <th>24h %</th>
+          <th>7d %</th>
+          <th>Action</th> <!-- New Column for Actions -->
+        </tr>
+      </thead>
+      <tbody id="watchlistTableBody">
+        <% watchlistCoins.forEach((coin, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td>
+            <td><%= coin.symbol %></td>
+            <td>Rp<%= (coin.quote.USD.price * 16000).toFixed(2) %></td>
+            <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td>
+            <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td>
+            <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td>
+            <td><button class="button" onclick="deleteCoin('<%= coin.symbol %>')">Delete</button></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    function deleteCoin(symbol) {
+      // Implement AJAX call to backend to delete coin from watchlist
+      console.log('Deleting coin:', symbol);
+      // Optionally refresh the list or handle the UI update
+    }
+  </script>
+</body>
+</html>
