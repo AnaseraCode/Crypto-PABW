@@ -5,16 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portfolio</title>
   <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      background-color: #1a1a2e;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .portfolio-container {
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #333;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      padding-top: 100px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #333;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .coin-list {
+      max-height: 300px;
+      overflow-y: auto;
+      list-style-type: none;
+      padding: 0;
+    }
+    .coin-list li {
+      padding: 10px;
+      cursor: pointer;
+    }
+    .coin-list li:hover {
+      background-color: #444;
+    }
+  </style>
 </head>
 <body>
   <h1>Your Coin Portfolio</h1>
   <div class="portfolio-container">
-    <div class="add-coin-form">
-      <input type="text" id="coinName" placeholder="Enter coin name (e.g., Bitcoin)">
-      <input type="number" id="coinQuantity" placeholder="Enter quantity" min="0" step="any">
-      <input type="number" id="coinPrice" placeholder="Enter price per coin (IDR)" min="0" step="any">
-      <button onclick="addCoin()">Add Coin</button>
-    </div>
+    <button onclick="showCoinSelectionModal()">Select Coin</button>
     <table>
       <thead>
         <tr>
@@ -32,8 +95,34 @@
     </table>
   </div>
 
+  <div id="coinSelectionModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCoinSelectionModal()">&times;</span>
+      <h2>Select your desired coin</h2>
+      <input type="text" id="coinSearch" placeholder="Search for a coin...">
+      <ul id="coinList" class="coin-list">
+        <!-- Coin items will be added here dynamically -->
+      </ul>
+    </div>
+  </div>
+
+  <div id="buyCoinModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeBuyCoinModal()">&times;</span>
+      <h2>Buy Coin</h2>
+      <div id="coinDetails"></div>
+      <label for="coinPrice">Price</label>
+      <input type="number" id="coinPrice" disabled>
+      <label for="coinQuantity">Quantity</label>
+      <input type="number" id="coinQuantity" min="0" step="any" oninput="updateSubtotal()">
+      <label for="subtotal">Subtotal</label>
+      <input type="number" id="subtotal" disabled>
+      <button onclick="buyCoin()">Buy Coin</button>
+    </div>
+  </div>
+
   <div id="chart-container">
-    <div id="tradingview-widget"></div>
+    <!-- TradingView widget will be placed here -->
   </div>
 
   <script src="https://s3.tradingview.com/tv.js"></script>
@@ -41,10 +130,31 @@
     const coinSymbols = {
       Bitcoin: 'bitcoin',
       Ethereum: 'ethereum',
-      // Add more coins as needed
+      Tether: 'tether',
+      BNB: 'binancecoin',
+      Solana: 'solana',
+      Ripple: 'ripple',
+      Cardano: 'cardano',
+      Polkadot: 'polkadot',
+      Litecoin: 'litecoin',
+      Chainlink: 'chainlink'
     };
 
     const portfolioData = [];
+    let selectedCoin = null;
+    let currentPrice = 0;
+
+    function showCoinSelectionModal() {
+      document.getElementById('coinSelectionModal').style.display = 'block';
+    }
+
+    function closeCoinSelectionModal() {
+      document.getElementById('coinSelectionModal').style.display = 'none';
+    }
+
+    function closeBuyCoinModal() {
+      document.getElementById('buyCoinModal').style.display = 'none';
+    }
 
     async function fetchCurrentPrice(coinName) {
       const coinId = coinSymbols[coinName];
@@ -52,7 +162,7 @@
         alert('Coin not supported');
         return null;
       }
-      
+
       try {
         const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=idr`);
         const data = await response.json();
@@ -63,14 +173,57 @@
       }
     }
 
+    function selectCoin(coinName) {
+      fetchCurrentPrice(coinName).then(price => {
+        if (price) {
+          selectedCoin = coinName;
+          currentPrice = price;
+          document.getElementById('coinDetails').innerHTML = `
+            <p><img src="/path/to/${coinName.toLowerCase()}.png" alt="${coinName}" /> ${coinName} (${coinSymbols[coinName].toUpperCase()})</p>
+          `;
+          document.getElementById('coinPrice').value = currentPrice;
+          document.getElementById('coinQuantity').value = 1;
+          updateSubtotal();
+          closeCoinSelectionModal();
+          document.getElementById('buyCoinModal').style.display = 'block';
+
+          // Call renderTradingViewWidget with the selected coin
+          renderTradingViewWidget(selectedCoin);
+        } else {
+          alert('Failed to fetch coin price');
+        }
+      });
+    }
+
+    function updateSubtotal() {
+      const quantity = parseFloat(document.getElementById('coinQuantity').value);
+      document.getElementById('subtotal').value = quantity * currentPrice;
+    }
+
+    function buyCoin() {
+      const coinQuantity = parseFloat(document.getElementById('coinQuantity').value);
+      const coinPrice = currentPrice;
+
+      portfolioData.push({
+        name: selectedCoin,
+        quantity: coinQuantity,
+        pricePerCoin: coinPrice,
+        currentPrice: coinPrice
+      });
+
+      renderPortfolio();
+      closeBuyCoinModal();
+    }
+
     function renderPortfolio() {
       const tableBody = document.getElementById('portfolioTableBody');
-      tableBody.innerHTML = '';
+      tableBody
+      .innerHTML = '';
 
       portfolioData.forEach((coin, index) => {
         const purchaseValue = coin.quantity * coin.pricePerCoin;
         const currentValue = coin.quantity * coin.currentPrice;
-        const worth = currentValue > purchaseValue ? 'Buy' : 'Sell';
+        const worth = currentValue > purchaseValue ? 'Profit' : 'Loss';
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -87,69 +240,87 @@
         tableBody.appendChild(row);
       });
 
-      renderTradingViewWidget();
-    }
-
-    async function addCoin() {
-      const coinName = document.getElementById('coinName').value.trim();
-      const coinQuantity = parseFloat(document.getElementById('coinQuantity').value.trim());
-      const coinPrice = parseFloat(document.getElementById('coinPrice').value.trim());
-
-      if (!coinName || isNaN(coinQuantity) || isNaN(coinPrice) || coinQuantity <= 0 || coinPrice <= 0) {
-        alert('Please enter valid coin name, quantity, and price per coin (IDR)');
-        return;
-      }
-
-      const currentPrice = await fetchCurrentPrice(coinName);
-
-      if (!currentPrice) {
-        return;
-      }
-
-      portfolioData.push({ name: coinName, quantity: coinQuantity, pricePerCoin: coinPrice, currentPrice: currentPrice });
-      renderPortfolio();
+      renderTradingViewWidget(selectedCoin); // Update the TradingView widget with the selected coin
+      calculatePortfolioSummary();
     }
 
     function editCoin(index) {
       const coin = portfolioData[index];
-      const coinPrice = parseFloat(prompt('Enter new purchase price per coin (IDR)', coin.pricePerCoin));
-      const currentPrice = parseFloat(prompt('Enter new current price per coin (IDR)', coin.currentPrice));
+      const newPrice = parseFloat(prompt('Enter new purchase price per coin (IDR)', coin.pricePerCoin));
+      const newCurrentPrice = parseFloat(prompt('Enter new current price per coin (IDR)', coin.currentPrice));
 
-      if (isNaN(coinPrice) || isNaN(currentPrice) || coinPrice <= 0 || currentPrice <= 0) {
-        alert('Please enter valid values');
-        return;
+      if (!isNaN(newPrice) && !isNaN(newCurrentPrice)) {
+        portfolioData[index].pricePerCoin = newPrice;
+        portfolioData[index].currentPrice = newCurrentPrice;
+        renderPortfolio();
+      } else {
+        alert('Invalid price entered');
       }
-
-      portfolioData[index].pricePerCoin = coinPrice;
-      portfolioData[index].currentPrice = currentPrice;
-      renderPortfolio();
     }
 
     function deleteCoin(index) {
-      portfolioData.splice(index, 1);
-      renderPortfolio();
+      if (confirm('Are you sure you want to delete this coin?')) {
+        portfolioData.splice(index, 1);
+        renderPortfolio();
+      }
     }
 
-    function renderTradingViewWidget() {
-      const symbols = portfolioData.map(coin => {
-        const symbol = coinSymbols[coin.name] || coin.name.toUpperCase();
-        return `COINBASE:${symbol.toUpperCase()}USD`;
+    function calculatePortfolioSummary() {
+      let totalValue = 0;
+
+      portfolioData.forEach(coin => {
+        totalValue += coin.quantity * coin.currentPrice;
       });
 
-      new TradingView.MediumWidget({
-        container_id: 'tradingview-widget',
-        symbols: symbols,
-        greyText: 'Quote list',
-        gridLineColor: '#e9e9ea',
-        fontColor: '#83888D',
-        underLineColor: '#dbeffb',
-        trendLineColor: '#4bafe9',
-        width: '100%',
-        height: 500,
-        locale: 'en'
+      document.getElementById('portfolioTotalValue').innerText = `Total Value: Rp${totalValue.toLocaleString()}`;
+    }
+
+    function renderTradingViewWidget(selectedCoin) {
+      const widgetContainer = document.getElementById('chart-container');
+      widgetContainer.innerHTML = '';
+
+      if (selectedCoin) {
+        const symbol = coinSymbols[selectedCoin];
+        const exchange = 'BINANCE';
+
+        new TradingView.widget({
+          "width": 980,
+          "height": 610,
+          "symbol": `${exchange}:${symbol}USDT`,
+          "interval": "D",
+          "timezone": "Etc/UTC",
+          "theme": "dark",
+          "style": "1",
+          "locale": "en",
+          "toolbar_bg": "#f1f3f6",
+          "enable_publishing": false,
+          "allow_symbol_change": true,
+          "container_id": "chart-container"
+        });
+      }
+    }
+
+    function filterCoinList() {
+      const searchInput = document.getElementById('coinSearch').value.toLowerCase();
+      const coinList = document.getElementById('coinList');
+      coinList.innerHTML = '';
+
+      Object.keys(coinSymbols).forEach(coin => {
+        if (coin.toLowerCase().includes(searchInput)) {
+          const li = document.createElement('li');
+          li.textContent = coin;
+          li.onclick = () => selectCoin(coin);
+          coinList.appendChild(li);
+        }
       });
     }
 
+    document.getElementById('coinSearch').addEventListener('input', filterCoinList);
+
+    // Initialize coin list
+    filterCoinList();
+
+    // Initialize the portfolio
     renderPortfolio();
   </script>
 </body>
