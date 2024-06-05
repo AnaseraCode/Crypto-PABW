@@ -87,6 +87,59 @@
 <body>
   <div class="widget-container">
     <h1>Rayyanjul Currency</h1>
+
+    <!-- TradingView Ticker Widget BEGIN -->
+    <div class="widget">
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <div class="tradingview-widget-copyright">
+          <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+            <span class="blue-text">Track all markets on TradingView</span>
+          </a>
+        </div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        ({
+          "symbols": [
+            {
+              "description": "Tesla",
+              "proName": "NASDAQ:TSLA"
+            },
+            {
+              "description": "Apple Inc",
+              "proName": "NASDAQ:AAPL"
+            },
+            {
+              "description": "Nvidia",
+              "proName": "NASDAQ:NVDA"
+            },
+            {
+              "description": "Microsoft",
+              "proName": "NASDAQ:MSFT"
+            },
+            {
+              "description": "Advanced Micro Devices",
+              "proName": "NASDAQ:AMD"
+            },
+            {
+              "description": "Meta",
+              "proName": "NASDAQ:META"
+            },
+            {
+              "description": "Netflix",
+              "proName": "NASDAQ:NFLX"
+            }
+          ],
+          "showSymbolLogo": true,
+          "colorTheme": "light",
+          "isTransparent": false,
+          "displayMode": "compact",
+          "locale": "en"
+        })
+        </script>
+      </div>
+    </div>
+    <!-- TradingView Ticker Widget END -->
+
     <div class="widget-row">
       <div class="widget">
         <div class="tradingview-widget-container">

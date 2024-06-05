@@ -211,7 +211,7 @@
 
     function updateSubtotal() {
       const quantity = parseFloat(document.getElementById('coinQuantity').value);
-      document.getElementById('subtotal').value = (quantity * currentPrice).toLocaleString();
+      document.getElementById('subtotal').value = (quantity * currentPrice).toFixed(2).toLocaleString();
     }
 
     function buyCoin() {
@@ -240,8 +240,8 @@
       tableBody.innerHTML = '';
 
       portfolioData.forEach((coin, index) => {
-        const purchaseValue = (coin.quantity * coin.pricePerCoin).toLocaleString();
-        const currentValue = (coin.currentPrice).toLocaleString();
+        const purchaseValue = (coin.quantity * coin.pricePerCoin).toFixed(2).toLocaleString();
+        const currentValue = (coin.currentPrice).toFixed(2).toLocaleString();
         let worth;
 
         if (currentValue > purchaseValue) {
@@ -288,15 +288,6 @@
       }
     }
 
-    function calculatePortfolioSummary() {
-      let totalValue = 0;
-
-      portfolioData.forEach(coin => {
-        totalValue += coin.quantity * coin.currentPrice;
-      });
-
-      document.getElementById('portfolioTotalValue').innerText = `Total Value: Rp${totalValue.toLocaleString()}`;
-    }
     function calculatePortfolioSummary() {
       let totalValue = 0;
 
@@ -354,5 +345,3 @@
   </script>
 </body>
 </html>
-
-
