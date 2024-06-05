@@ -65,27 +65,44 @@
         </tr>
       </thead>
       <tbody id="watchlistTableBody">
-        <% watchlistCoins.forEach((coin, index) => { %>
+        <% if (watchlistCoins.length > 0) { %>
+          <% watchlistCoins.forEach((coin, index) => { %>
+            <tr>
+                <td><%= index + 1 %></td>
+                <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td>
+                <td><%= coin.symbol %></td>
+                <td>Rp<%= (coin.quote.USD.price * 16000).toFixed(2) %></td>
+                <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td>
+                <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td>
+                <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td>
+                <td><button class="button" onclick="deleteCoin('<%= coin.symbol %>')">Delete</button></td>
+            </tr>
+          <% }); %>
+        <% } else { %>
           <tr>
-            <td><%= index + 1 %></td>
-            <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td>
-            <td><%= coin.symbol %></td>
-            <td>Rp<%= (coin.quote.USD.price * 16000).toFixed(2) %></td>
-            <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td>
-            <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td>
-            <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td>
-            <td><button class="button" onclick="deleteCoin('<%= coin.symbol %>')">Delete</button></td>
+            <td colspan="8">No coins in watchlist</td>
           </tr>
-        <% }); %>
+        <% } %>
       </tbody>
+      
     </table>
   </div>
   <script>
     function deleteCoin(symbol) {
-      // Implement AJAX call to backend to delete coin from watchlist
-      console.log('Deleting coin:', symbol);
-      // Optionally refresh the list or handle the UI update
+      fetch('/deleteFromWatchlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ symbol: symbol })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.message); // Log atau tampilkan pesan sukses
+        location.reload(); // Muat ulang halaman untuk menampilkan perubahan
+      })
+      .catch(error => console.error('Error:', error));
     }
-  </script>
+  </script>  
 </body>
 </html>

@@ -31,6 +31,7 @@
       </a>
     </div>
   </div>
+  <button class="button" onclick="addToWatchlist('<%= symbol %>')">Add to Watchlist</button>
   <script type="text/javascript">
     var symbol = "<%= symbol %>"; 
     var script = document.createElement("script"); 
@@ -51,6 +52,24 @@
       "support_host": "https://www.tradingview.com" 
     });
     document.querySelector('.tradingview-widget-container__widget').appendChild(script); 
+  </script>
+
+  <script>
+    function addToWatchlist(symbol) {
+      // Implementasi AJAX untuk mengirim simbol ke backend
+      fetch('/addToWatchlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ symbol: symbol })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message); // Tampilkan pesan setelah berhasil
+      })
+      .catch(error => console.error('Error:', error));
+    }
   </script>
 </body>
 </html>
