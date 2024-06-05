@@ -86,59 +86,12 @@
 </head>
 <body>
   <div class="widget-container">
-    <h1>Radifo Currency</h1>
+    <h1>Rayyanjul Currency</h1>
 
-    <!-- TradingView Ticker Widget BEGIN -->
-    <div class="widget">
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <div class="tradingview-widget-copyright">
-          <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
-            <span class="blue-text">Track all markets on TradingView</span>
-          </a>
-        </div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-        ({
-          "symbols": [
-            {
-              "description": "Tesla",
-              "proName": "NASDAQ:TSLA"
-            },
-            {
-              "description": "Apple Inc",
-              "proName": "NASDAQ:AAPL"
-            },
-            {
-              "description": "Nvidia",
-              "proName": "NASDAQ:NVDA"
-            },
-            {
-              "description": "Microsoft",
-              "proName": "NASDAQ:MSFT"
-            },
-            {
-              "description": "Advanced Micro Devices",
-              "proName": "NASDAQ:AMD"
-            },
-            {
-              "description": "Meta",
-              "proName": "NASDAQ:META"
-            },
-            {
-              "description": "Netflix",
-              "proName": "NASDAQ:NFLX"
-            }
-          ],
-          "showSymbolLogo": true,
-          "colorTheme": "light",
-          "isTransparent": false,
-          "displayMode": "compact",
-          "locale": "en"
-        })
-        </script>
-      </div>
-    </div>
-    <!-- TradingView Ticker Widget END -->
+    <!-- New Ticker Widget BEGIN -->
+    <script type="text/javascript" src="https://files.coinmarketcap.com/static/widget/coinMarquee.js"></script>
+    <div id="coinmarketcap-widget-marquee" coins="1,1027,825" currency="USD" theme="light" transparent="false" show-symbol-logo="true"></div>
+    <!-- New Ticker Widget END -->
 
     <div class="widget-row">
       <div class="widget">
@@ -167,8 +120,8 @@
         <div class="tradingview-widget-container">
           <div class="tradingview-widget-container__widget"></div>
           <div class="tradingview-widget-copyright">
-            <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
-              <span class="blue-text">Track all markets on TradingView</span>
+            <a href="https://id.tradingview.com/" rel="noopener nofollow" target="_blank">
+              <span class="blue-text">Lacak seluruh pasar di TradingView</span>
             </a>
           </div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
@@ -177,8 +130,8 @@
           "title_raw": "Cryptocurrencies",
           "tabs": [
             {
-              "title": "Overview",
-              "title_raw": "Overview",
+              "title": "Ikhtisar",
+              "title_raw": "Ikhtisar",
               "symbols": [
                 {
                   "s": "CRYPTOCAP:TOTAL"
@@ -200,7 +153,7 @@
                 }
               ],
               "quick_link": {
-                "title": "More cryptocurrencies",
+                "title": "Lebih banyak cryptocurrency",
                 "href": "/markets/cryptocurrencies/prices-all/"
               }
             },
@@ -225,7 +178,7 @@
                 }
               ],
               "quick_link": {
-                "title": "More Bitcoin pairs",
+                "title": "Lebih banyak pasangan Bitcoin",
                 "href": "/symbols/BTCUSD/markets/"
               }
             },
@@ -253,7 +206,7 @@
                 }
               ],
               "quick_link": {
-                "title": "More Ethereum pairs",
+                "title": "Lebih banyak pasangan Ethereum",
                 "href": "/symbols/ETHUSD/markets/"
               }
             },
@@ -281,7 +234,7 @@
                 }
               ],
               "quick_link": {
-                "title": "More Solana pairs",
+                "title": "Lebih banyak pasangan Solana",
                 "href": "/symbols/SOLUSD/markets/"
               }
             },
@@ -309,7 +262,7 @@
                 }
               ],
               "quick_link": {
-                "title": "More Uniswap pairs",
+                "title": "Lebih banyak pasangan Uniswap",
                 "href": "/symbols/UNIUSD/markets/"
               }
             }
@@ -319,7 +272,7 @@
           "height": "100%",
           "showChart": true,
           "showFloatingTooltip": false,
-          "locale": "en",
+          "locale": "id",
           "plotLineColorGrowing": "#2962FF",
           "plotLineColorFalling": "#2962FF",
           "belowLineFillColorGrowing": "rgba(41, 98, 255, 0.12)",
@@ -330,7 +283,7 @@
           "scaleFontColor": "rgba(120, 123, 134, 1)",
           "showSymbolLogo": true,
           "symbolActiveColor": "rgba(41, 98, 255, 0.12)",
-          "colorTheme": "light"
+          "colorTheme": "dark"
         })
           </script>
         </div>
