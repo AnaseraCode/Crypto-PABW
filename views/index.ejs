@@ -37,9 +37,9 @@
         </tr>
       </thead>
       <tbody id="coinTableBody">
-        <% coins.forEach((coin, index) => { %>
+        <% coins.slice((currentPage - 1) * 20, currentPage * 20).forEach((coin, index) => { %>
           <tr>
-            <td><%= (currentPage - 1) * 50 + index + 1 %></td>
+            <td><%= (currentPage - 1) * 20 + index + 1 %></td>
             <td><a href="/chart/<%= coin.symbol %>"><%= coin.name %></a></td>
             <td><%= coin.symbol %></td>
             <td>Rp<%= (coin.quote.USD.price * 16000).toFixed(2) %></td>
@@ -52,26 +52,26 @@
       </tbody>
     </table>
     <div class="pagination">
-      <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 2) * 50 + 1 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button>
-      <button onclick="window.location.href='/nextPage?start=<%= currentPage * 50 + 1 %>'">Next Page</button>
+      <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 1) * 20 + 1 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button>
+      <button onclick="window.location.href='/nextPage?start=<%= currentPage * 20 + 1 %>'">Next Page</button>
     </div>
   </div>
 
   <script>
     const coinsData = '<%- JSON.stringify(coins) %>';
     const coins = JSON.parse(coinsData);
-  
+
     function searchCoins() {
       const searchQuery = document.getElementById('search').value.toLowerCase();
       const filteredCoins = coins.filter(coin =>
         coin.name.toLowerCase().includes(searchQuery) ||
         coin.symbol.toLowerCase().includes(searchQuery)
       );
-  
+
       const coinTableBody = document.getElementById('coinTableBody');
       coinTableBody.innerHTML = '';
-  
-      filteredCoins.forEach((coin, index) => {
+
+      filteredCoins.slice(0, 20).forEach((coin, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${index + 1}</td>
@@ -86,7 +86,7 @@
         coinTableBody.appendChild(row);
       });
     }
-  
+
     document.getElementById('monitorForm').addEventListener('submit', function(event) {
       const selectedCoins = Array.from(document.querySelectorAll('input[name="selectedCoins"]:checked'))
                                 .map(input => input.value);

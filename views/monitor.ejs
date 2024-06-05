@@ -1,72 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monitor Pantau Coin</title>
-  <link rel="stylesheet" href="/styles.css">
+    <title>Coin Pantau</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body {
+            background: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .widget-container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            height: 100%;
+        }
+        .widget {
+            flex: 1 1 calc(100% / 3); /* Default to 3 widgets per row */
+            height: 50vh; /* Default height */
+        }
+        @media (max-width: 1200px) {
+            .widget {
+                flex: 1 1 calc(100% / 2); /* 2 widgets per row */
+                height: 50vh;
+            }
+        }
+        @media (max-width: 768px) {
+            .widget {
+                flex: 1 1 100%; /* 1 widget per row */
+                height: 100vh;
+            }
+        }
+        .tradingview-widget-container {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <% console.log(selectedCoins); %> 
 </head>
 <body>
-  <div class="widget-grid">
-    <% selectedCoins.forEach((symbol, index) => { %>
-      <div class="widget-container">
-        <!-- TradingView Widget BEGIN -->
-        <div class="tradingview-widget-container" style="height:100%;width:100%">
-          <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-          <div class="tradingview-widget-copyright">
-            <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"></a>
+    <div class="widget-container">
+      <% if (selectedCoins.length > 0) { %>
+          <% selectedCoins.forEach(function(coin) { %>
+              <div class="widget">
+                  <!-- TradingView Widget BEGIN -->
+                  <div class="tradingview-widget-container">
+                      <div class="tradingview-widget-container__widget">
+                          <!-- Letakkan widget-chart di sini -->
+                          <div class="tradingview-widget-container__widget" id="<%= coin %>"></div>
+                      </div>
+                      <div class="tradingview-widget-copyright">
+                          <a href="https://id.tradingview.com/" rel="noopener nofollow" target="_blank">
+                              <span class="blue-text" style="visibility:hidden;">Lacak seluruh pasar di TradingView</span>
+                          </a>
+                      </div>
+                      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                      ({
+                          "autosize": true,
+                          "symbol": "BINANCE:<%= coin %>USDT",
+                          "interval": "D",
+                          "timezone": "Asia/Jakarta",
+                          "theme": "dark",
+                          "style": "1",
+                          "locale": "id",
+                          "enable_publishing": false,
+                          "allow_symbol_change": true,
+                          "studies": [
+                              "STD;RSI",
+                              "STD;Stochastic_RSI"
+                          ],
+                          "support_host": "https://www.tradingview.com"
+                      })
+                      </script>
+                  </div>
+                  <!-- TradingView Widget END -->
+              </div>
+          <% }); %>
+      <% } else { %>
+          <div class="text-center text-white">
+              <h1>Tidak ada koin yang dipilih untuk dipantau.</h1>
           </div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-          ({
-            "autosize": true,
-            "symbol": "COINBASE:<%= symbol %>",
-            "interval": "30",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": "en",
-            "allow_symbol_change": true,
-            "calendar": false,
-            "support_host": "https://www.tradingview.com"
-          })
-          </script>
-        </div>
-        <!-- TradingView Widget END -->
-      </div>
-    <% }); %>
-  </div>  
+      <% } %>
+  </div>
 </body>
 </html>
-
-<style>
-  body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-  }
-  
-  .widget-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 0;
-    height: 100%;
-    width: 100%;
-  }
-
-  .widget-container {
-    height: 100%;
-    width: 100%;
-  }
-
-  .tradingview-widget-container {
-    height: 100%;
-    width: 100%;
-  }
-
-  .tradingview-widget-container__widget {
-    height: calc(100% - 32px);
-    width: 100%;
-  }
-</style>

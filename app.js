@@ -78,12 +78,14 @@ app.get('/prevPage', async (req, res) => {
 });
 
 // Route untuk halaman monitor
-app.get('/monitor', (req, res) => {
+app.get('/monitor', async (req, res) => {
   try {
-    const selectedCoins = req.query.selectedCoins ? req.query.selectedCoins.split(',') : [];
-    res.render('monitor', { selectedCoins });
-  } catch (err) {
-    console.error(err);
+    const selectedCoins = req.query.selected_coins ? req.query.selected_coins.split(',') : [];
+    // Panggil fungsi fetchCoins untuk mendapatkan data koin terkait
+    const coins = await fetchCoins(selectedCoins.join(',')); // Mengambil data koin berdasarkan simbol yang dipilih
+    res.render('monitor', { coins });
+  } catch (error) {
+    console.error('Error fetching coins data for monitor:', error);
     res.status(500).send('Internal Server Error');
   }
 });
