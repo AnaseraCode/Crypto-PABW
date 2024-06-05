@@ -96,6 +96,7 @@
         <!-- Rows will be added here dynamically -->
       </tbody>
     </table>
+    <p id="portfolioTotalValue"></p>
   </div>
 
   <div id="coinSelectionModal" class="modal">
@@ -121,6 +122,16 @@
       <label for="subtotal">Subtotal</label>
       <input type="number" id="subtotal" disabled>
       <button onclick="buyCoin()">Buy Coin</button>
+    </div>
+  </div>
+
+  <div id="editCoinModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeEditCoinModal()">&times;</span>
+      <h2>Edit Coin Quantity</h2>
+      <label for="editQuantity">New Quantity</label>
+      <input type="number" id="editQuantity" min="0" step="any">
+      <button onclick="editCoinQuantity()">Save Changes</button>
     </div>
   </div>
 
@@ -157,6 +168,10 @@
       document.getElementById('buyCoinModal').style.display = 'none';
     }
 
+    function closeEditCoinModal() {
+      document.getElementById('editCoinModal').style.display = 'none';
+    }
+
     async function fetchCurrentPrice(coinName) {
       const coinId = coinSymbols[coinName];
       if (!coinId) {
@@ -187,7 +202,6 @@
           updateSubtotal();
           closeCoinSelectionModal();
           document.getElementById('buyCoinModal').style.display = 'block';
-
           renderTradingViewWidget(coinSymbols[coinName]); // Call renderTradingViewWidget with the selected coin
         } else {
           alert('Failed to fetch coin price');
@@ -197,11 +211,17 @@
 
     function updateSubtotal() {
       const quantity = parseFloat(document.getElementById('coinQuantity').value);
-      document.getElementById('subtotal').value = quantity * currentPrice;
+      document.getElementById('subtotal').value = (quantity * currentPrice).toLocaleString();
     }
 
     function buyCoin() {
       const coinQuantity = parseFloat(document.getElementById('coinQuantity').value);
+
+      if (isNaN(coinQuantity) || coinQuantity <= 0) {
+        alert('Please enter a valid quantity.');
+        return;
+      }
+
       const coinPrice = currentPrice;
 
       portfolioData.push({
@@ -220,8 +240,8 @@
       tableBody.innerHTML = '';
 
       portfolioData.forEach((coin, index) => {
-        const purchaseValue = coin.quantity * coin.pricePerCoin;
-        const currentValue = coin.quantity * coin.currentPrice;
+        const purchaseValue = (coin.quantity * coin.pricePerCoin).toLocaleString();
+        const currentValue = (coin.currentPrice).toLocaleString();
         let worth;
 
         if (currentValue > purchaseValue) {
@@ -236,11 +256,11 @@
         row.innerHTML = `
           <td>${coin.name}</td>
           <td>${coin.quantity}</td>
-          <td>Rp${purchaseValue.toLocaleString()}</td>
-          <td>Rp${currentValue.toLocaleString()}</td>
+          <td>Rp${purchaseValue}</td>
+          <td>Rp${currentValue}</td>
           <td>${worth}</td>
           <td>
-            <button onclick="editCoin(${index})">Edit</button>
+            <button onclick="editCoinQuantity(${index})">Edit</button>
             <button onclick="deleteCoin(${index})">Delete</button>
           </td>
         `;
@@ -251,17 +271,13 @@
       calculatePortfolioSummary();
     }
 
-    function editCoin(index) {
-      const coin = portfolioData[index];
-      const newPrice = parseFloat(prompt('Enter new purchase price per coin (IDR)', coin.pricePerCoin));
-      const newCurrentPrice = parseFloat(prompt('Enter new current price per coin (IDR)', coin.currentPrice));
-
-      if (!isNaN(newPrice) && !isNaN(newCurrentPrice)) {
-        portfolioData[index].pricePerCoin = newPrice;
-        portfolioData[index].currentPrice = newCurrentPrice;
+    function editCoinQuantity(index) {
+      const newQuantity = parseFloat(prompt('Enter new quantity', portfolioData[index].quantity));
+      if (!isNaN(newQuantity) && newQuantity >= 0) {
+        portfolioData[index].quantity = newQuantity;
         renderPortfolio();
       } else {
-        alert('Invalid price entered');
+        alert('Invalid quantity entered');
       }
     }
 
@@ -272,6 +288,15 @@
       }
     }
 
+    function calculatePortfolioSummary() {
+      let totalValue = 0;
+
+      portfolioData.forEach(coin => {
+        totalValue += coin.quantity * coin.currentPrice;
+      });
+
+      document.getElementById('portfolioTotalValue').innerText = `Total Value: Rp${totalValue.toLocaleString()}`;
+    }
     function calculatePortfolioSummary() {
       let totalValue = 0;
 
@@ -329,3 +354,5 @@
   </script>
 </body>
 </html>
+
+
