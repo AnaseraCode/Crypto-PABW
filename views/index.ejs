@@ -5,14 +5,287 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      background-color: #141E30; 
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .widget-container {
+      display: flex;
+      flex-direction: column; /* Maintain column layout for overall container */
+      align-items: center;
+      padding: 20px;
+    }
+    .widget-row {
+      display: flex;
+      flex-direction: row; /* Change direction to row for horizontal alignment */
+      justify-content: space-between; /* Space out widgets evenly */
+      width: 90%;
+      margin: 10px 0;
+    }
+    .widget {
+      width: 48%; /* Adjust width to fit two widgets side by side */
+      margin: 10px 0;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 0;
+    }
+    .container {
+      padding: 20px;
+      background-color: #1E293B;
+      border-radius: 8px;
+      width: 90%; /* Control width of the table container */
+      margin: auto; /* Center the container */
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #3B4252;
+    }
+    tr:nth-child(even) {
+      background-color: #2E3440;
+    }
+    .button {
+      background-color: #4C566A;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #5E81AC;
+    }
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .pagination button {
+      background-color: #4C566A;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    .pagination button:disabled {
+      background-color: #3B4252;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
   <div class="widget-container">
-    <script type="text/javascript" src="https://files.coinmarketcap.com/static/widget/coinMarquee.js"></script>
-    <div id="coinmarketcap-widget-marquee" coins="1,1027,825,52,74,5994,512,24478" currency="USD" theme="dark" transparent="false" show-symbol-logo="true"></div>
+    <h1>Rayyanjul Currency</h1>
+    <div class="widget-row">
+      <div class="widget">
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <div class="tradingview-widget-copyright">
+            <a href="https://id.tradingview.com/" rel="noopener nofollow" target="_blank">
+              <span class="blue-text">Lacak seluruh pasar di TradingView</span>
+            </a>
+          </div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+          ({
+            "feedMode": "all_symbols",
+            "isTransparent": false,
+            "displayMode": "regular",
+            "width": "100%",
+            "height": "550",
+            "colorTheme": "dark",
+            "locale": "id"
+          })
+          </script>
+        </div>
+      </div>
+      <div class="widget">
+        <!-- TradingView Widget BEGIN -->
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <div class="tradingview-widget-copyright">
+            <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+              <span class="blue-text">Track all markets on TradingView</span>
+            </a>
+          </div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+          ({
+          "title": "Cryptocurrencies",
+          "title_raw": "Cryptocurrencies",
+          "tabs": [
+            {
+              "title": "Overview",
+              "title_raw": "Overview",
+              "symbols": [
+                {
+                  "s": "CRYPTOCAP:TOTAL"
+                },
+                {
+                  "s": "BITSTAMP:BTCUSD"
+                },
+                {
+                  "s": "BITSTAMP:ETHUSD"
+                },
+                {
+                  "s": "FTX:SOLUSD"
+                },
+                {
+                  "s": "BINANCE:AVAXUSD"
+                },
+                {
+                  "s": "COINBASE:UNIUSD"
+                }
+              ],
+              "quick_link": {
+                "title": "More cryptocurrencies",
+                "href": "/markets/cryptocurrencies/prices-all/"
+              }
+            },
+            {
+              "title": "Bitcoin",
+              "title_raw": "Bitcoin",
+              "symbols": [
+                {
+                  "s": "BITSTAMP:BTCUSD"
+                },
+                {
+                  "s": "COINBASE:BTCEUR"
+                },
+                {
+                  "s": "COINBASE:BTCGBP"
+                },
+                {
+                  "s": "BITFLYER:BTCJPY"
+                },
+                {
+                  "s": "CME:BTC1!"
+                }
+              ],
+              "quick_link": {
+                "title": "More Bitcoin pairs",
+                "href": "/symbols/BTCUSD/markets/"
+              }
+            },
+            {
+              "title": "Ethereum",
+              "title_raw": "Ethereum",
+              "symbols": [
+                {
+                  "s": "BITSTAMP:ETHUSD"
+                },
+                {
+                  "s": "KRAKEN:ETHEUR"
+                },
+                {
+                  "s": "COINBASE:ETHGBP"
+                },
+                {
+                  "s": "BITFLYER:ETHJPY"
+                },
+                {
+                  "s": "BINANCE:ETHBTC"
+                },
+                {
+                  "s": "BINANCE:ETHUSDT"
+                }
+              ],
+              "quick_link": {
+                "title": "More Ethereum pairs",
+                "href": "/symbols/ETHUSD/markets/"
+              }
+            },
+            {
+              "title": "Solana",
+              "title_raw": "Solana",
+              "symbols": [
+                {
+                  "s": "FTX:SOLUSD"
+                },
+                {
+                  "s": "BINANCE:SOLEUR"
+                },
+                {
+                  "s": "COINBASE:SOLGBP"
+                },
+                {
+                  "s": "BINANCE:SOLBTC"
+                },
+                {
+                  "s": "HUOBI:SOLETH"
+                },
+                {
+                  "s": "BINANCE:SOLUSDT"
+                }
+              ],
+              "quick_link": {
+                "title": "More Solana pairs",
+                "href": "/symbols/SOLUSD/markets/"
+              }
+            },
+            {
+              "title": "Uniswap",
+              "title_raw": "Uniswap",
+              "symbols": [
+                {
+                  "s": "COINBASE:UNIUSD"
+                },
+                {
+                  "s": "KRAKEN:UNIEUR"
+                },
+                {
+                  "s": "COINBASE:UNIGBP"
+                },
+                {
+                  "s": "BINANCE:UNIBTC"
+                },
+                {
+                  "s": "KRAKEN:UNIETH"
+                },
+                {
+                  "s": "BINANCE:UNIUSDT"
+                }
+              ],
+              "quick_link": {
+                "title": "More Uniswap pairs",
+                "href": "/symbols/UNIUSD/markets/"
+              }
+            }
+          ],
+          "title_link": "/markets/cryptocurrencies/prices-all/",
+          "width": "100%",
+          "height": "100%",
+          "showChart": true,
+          "showFloatingTooltip": false,
+          "locale": "en",
+          "plotLineColorGrowing": "#2962FF",
+          "plotLineColorFalling": "#2962FF",
+          "belowLineFillColorGrowing": "rgba(41, 98, 255, 0.12)",
+          "belowLineFillColorFalling": "rgba(41, 98, 255, 0.12)",
+          "belowLineFillColorGrowingBottom": "rgba(41, 98, 255, 0)",
+          "belowLineFillColorFallingBottom": "rgba(41, 98, 255, 0)",
+          "gridLineColor": "rgba(240, 243, 250, 0)",
+          "scaleFontColor": "rgba(120, 123, 134, 1)",
+          "showSymbolLogo": true,
+          "symbolActiveColor": "rgba(41, 98, 255, 0.12)",
+          "colorTheme": "light"
+        })
+          </script>
+        </div>
+        <!-- TradingView Widget END -->
+      </div>
+    </div>
   </div>
 
-  <h1>Rayyanjul Currency</h1>
   <div class="container">
     <form id="monitorForm" action="/monitor" method="get">
       <div class="search-bar">
@@ -22,7 +295,8 @@
         <button type="submit" class="button">Monitor</button>
         <a href="/portfolio" class="button">Portfolio</a>
       </div>
-    </form>    
+    </form>
+    
     <table>
       <thead>
         <tr>
