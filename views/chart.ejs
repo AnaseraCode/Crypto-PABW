@@ -6,6 +6,7 @@
   <title>Coin Chart: <%= symbol %></title>
   <link rel="stylesheet" href="/styles.css"> <!-- Pastikan ini mengarah ke CSS yang tepat -->
   <style>
+    /* Mengatur tampilan halaman */
     body {
       margin: 0;
       padding: 0;
@@ -13,6 +14,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden; /* Mencegah scroll horizontal */
     }
     h1 {
       font-family: 'Poppins', sans-serif;
@@ -25,7 +28,7 @@
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-top: 10px; /* Adjust this value as needed */
+      margin-top: 10px; /* Sesuaikan nilai ini sesuai kebutuhan */
     }
     .button {
       background-color: #4C566A;
@@ -38,38 +41,65 @@
     .button:hover {
       background-color: #5E81AC;
     }
+    .container {
+      display: flex;
+      width: 90%;
+      margin-top: 20px; /* Jarak antara tombol dan grafik */
+      flex-wrap: wrap; /* Membiarkan widget membungkus jika diperlukan */
+    }
     .tradingview-widget-container {
-      width: 90%; /* Adjust width as needed */
-      margin-top: 20px; /* Space between buttons and chart */
+      flex: 2;
+      min-width: 300px; /* Lebar minimum untuk responsivitas */
+      margin-right: 10px;
+    }
+    .news-widget-container {
+      flex: 1;
+      min-width: 300px; /* Lebar minimum untuk responsivitas */
+    }
+    .tradingview-widget-container__widget {
+      height: 600px; /* Sesuaikan tinggi sesuai kebutuhan */
+    }
+    .news-widget-container .tradingview-widget-container__widget {
+      height: 600px; /* Sesuaikan tinggi sesuai kebutuhan */
     }
   </style>
 </head>
 <body>
+  <!-- Judul halaman -->
   <h1>Coin Chart: <%= symbol %></h1>
   
+  <!-- Tombol untuk menambah koin ke watchlist dan melihat watchlist -->
   <div class="button-container">
-    <!-- Button to Add Coin to Watchlist -->
+    <!-- Tombol untuk menambah koin ke watchlist -->
     <button class="button" onclick="addToWatchlist('<%= symbol %>')">Add to Watchlist</button>
-    <!-- Button to View Watchlist -->
+    <!-- Tombol untuk melihat watchlist -->
     <button class="button" onclick="window.location.href='/watchlist'">View Watchlist</button>
   </div>
   
-  <div class="tradingview-widget-container">
-    <div class="tradingview-widget-container__widget" style="height: calc(100vh - 130px);"></div>
-    <div class="tradingview-widget-copyright">
-      <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
-        <span class="blue-text"></span>
-      </a>
+  <!-- Kontainer untuk widget TradingView -->
+  <div class="container">
+    <div class="news-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+    </div>
+    
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <div class="tradingview-widget-copyright">
+        <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+          <span class="blue-text"></span>
+        </a>
+      </div>
     </div>
   </div>
 
+  <!-- Menambahkan widget grafik dari TradingView -->
   <script type="text/javascript">
     var symbol = "<%= symbol %>"; 
-    var script = document.createElement("script"); 
-    script.type = "text/javascript"; 
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"; 
-    script.async = true; 
-    script.innerHTML = JSON.stringify({
+    var chartScript = document.createElement("script"); 
+    chartScript.type = "text/javascript"; 
+    chartScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"; 
+    chartScript.async = true; 
+    chartScript.innerHTML = JSON.stringify({
       "autosize": true, 
       "symbol": symbol, 
       "interval": "D", 
@@ -82,9 +112,25 @@
       "calendar": false, 
       "support_host": "https://www.tradingview.com" 
     });
-    document.querySelector('.tradingview-widget-container__widget').appendChild(script); 
+    document.querySelector('.tradingview-widget-container .tradingview-widget-container__widget').appendChild(chartScript); 
+
+    var newsScript = document.createElement("script");
+    newsScript.type = "text/javascript";
+    newsScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-timeline.js";
+    newsScript.async = true;
+    newsScript.innerHTML = JSON.stringify({
+      "feedMode": "market",
+      "colorTheme": "dark",
+      "isTransparent": false,
+      "displayMode": "regular",
+      "width": "100%",
+      "height": "100%",
+      "locale": "en"
+    });
+    document.querySelector('.news-widget-container .tradingview-widget-container__widget').appendChild(newsScript);
   </script>
 
+  <!-- Fungsi untuk menambah koin ke watchlist -->
   <script>
     function addToWatchlist(symbol) {
       fetch(`/add-to-watchlist`, {

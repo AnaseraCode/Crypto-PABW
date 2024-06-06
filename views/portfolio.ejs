@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portfolio</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.css"> <!-- Mengimpor stylesheet eksternal -->
   <style>
+    /* Mengatur tampilan halaman */
     body {
       background-color: #141E30;
       color: white;
@@ -26,6 +27,7 @@
     th {
       background-color: #333;
     }
+    /* Pengaturan tampilan modal */
     .modal {
       display: none;
       position: fixed;
@@ -78,9 +80,12 @@
   </style>
 </head>
 <body>
+  <!-- Judul halaman -->
   <h1>Your Coin Portfolio</h1>
   <div class="portfolio-container">
+    <!-- Tombol untuk menampilkan modal pemilihan koin -->
     <button onclick="showCoinSelectionModal()">Select Coin</button>
+    <!-- Tabel untuk menampilkan portfolio koin -->
     <table>
       <thead>
         <tr>
@@ -93,23 +98,25 @@
         </tr>
       </thead>
       <tbody id="portfolioTableBody">
-        <!-- Rows will be added here dynamically -->
+        <!-- Baris akan ditambahkan secara dinamis -->
       </tbody>
     </table>
     <p id="portfolioTotalValue"></p>
   </div>
 
+  <!-- Modal untuk pemilihan koin -->
   <div id="coinSelectionModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeCoinSelectionModal()">&times;</span>
       <h2>Select your desired coin</h2>
       <input type="text" id="coinSearch" placeholder="Search for a coin...">
       <ul id="coinList" class="coin-list">
-        <!-- Coin items will be added here dynamically -->
+        <!-- Daftar koin akan ditambahkan secara dinamis -->
       </ul>
     </div>
   </div>
 
+  <!-- Modal untuk membeli koin -->
   <div id="buyCoinModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeBuyCoinModal()">&times;</span>
@@ -125,6 +132,7 @@
     </div>
   </div>
 
+  <!-- Modal untuk mengedit jumlah koin -->
   <div id="editCoinModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeEditCoinModal()">&times;</span>
@@ -135,6 +143,7 @@
     </div>
   </div>
 
+  <!-- Kontainer untuk grafik TradingView -->
   <div id="chart-container"></div>
 
   <script src="https://s3.tradingview.com/tv.js"></script>
@@ -154,22 +163,27 @@
     let selectedCoin = null;
     let currentPrice = 0;
 
+    // Menampilkan modal pemilihan koin
     function showCoinSelectionModal() {
       document.getElementById('coinSelectionModal').style.display = 'block';
     }
 
+    // Menutup modal pemilihan koin
     function closeCoinSelectionModal() {
       document.getElementById('coinSelectionModal').style.display = 'none';
     }
 
+    // Menutup modal pembelian koin
     function closeBuyCoinModal() {
       document.getElementById('buyCoinModal').style.display = 'none';
     }
 
+    // Menutup modal pengeditan koin
     function closeEditCoinModal() {
       document.getElementById('editCoinModal').style.display = 'none';
     }
 
+    // Mengambil harga terkini dari API
     async function fetchCurrentPrice(coinName) {
       const coinId = coinSymbols[coinName];
       if (!coinId) {
@@ -187,6 +201,7 @@
       }
     }
 
+    // Memilih koin dan menampilkan modal pembelian koin
     function selectCoin(coinName) {
       fetchCurrentPrice(coinName).then(price => {
         if (price) {
@@ -200,18 +215,20 @@
           updateSubtotal();
           closeCoinSelectionModal();
           document.getElementById('buyCoinModal').style.display = 'block';
-          renderTradingViewWidget(coinSymbols[coinName]); // Call renderTradingViewWidget with the selected coin
+          renderTradingViewWidget(coinSymbols[coinName]); // Menampilkan grafik TradingView
         } else {
           alert('Failed to fetch coin price');
         }
       });
     }
 
+    // Menghitung subtotal pembelian koin
     function updateSubtotal() {
       const quantity = parseFloat(document.getElementById('coinQuantity').value);
       document.getElementById('subtotal').value = (quantity * currentPrice).toFixed(2).toLocaleString();
     }
 
+    // Menambah koin ke portfolio
     function buyCoin() {
       const coinQuantity = parseFloat(document.getElementById('coinQuantity').value);
 
@@ -233,6 +250,7 @@
       closeBuyCoinModal();
     }
 
+    // Menampilkan data portfolio
     function renderPortfolio() {
       const tableBody = document.getElementById('portfolioTableBody');
       tableBody.innerHTML = '';
@@ -265,10 +283,11 @@
         tableBody.appendChild(row);
       });
 
-      renderTradingViewWidget(coinSymbols[selectedCoin]); // Update the TradingView widget with the selected coin
+      renderTradingViewWidget(coinSymbols[selectedCoin]); // Update widget TradingView dengan koin terpilih
       calculatePortfolioSummary();
     }
 
+    // Mengedit jumlah koin di portfolio
     function editCoinQuantity(index) {
       const newQuantity = parseFloat(prompt('Enter new quantity', portfolioData[index].quantity));
       if (!isNaN(newQuantity) && newQuantity >= 0) {
@@ -279,6 +298,7 @@
       }
     }
 
+    // Menghapus koin dari portfolio
     function deleteCoin(index) {
       if (confirm('Are you sure you want to delete this coin?')) {
         portfolioData.splice(index, 1);
@@ -286,6 +306,7 @@
       }
     }
 
+    // Menghitung total nilai portfolio
     function calculatePortfolioSummary() {
       let totalValue = 0;
 
@@ -296,6 +317,7 @@
       document.getElementById('portfolioTotalValue').innerText = `Total Value: Rp${totalValue.toLocaleString()}`;
     }
 
+    // Menampilkan grafik TradingView
     function renderTradingViewWidget(symbol) {
       const widgetContainer = document.getElementById('chart-container');
       widgetContainer.innerHTML = '';
@@ -318,6 +340,7 @@
       }
     }
 
+    // Menyaring daftar koin berdasarkan input pencarian
     function filterCoinList() {
       const searchInput = document.getElementById('coinSearch').value.toLowerCase();
       const coinList = document.getElementById('coinList');
@@ -335,10 +358,10 @@
 
     document.getElementById('coinSearch').addEventListener('input', filterCoinList);
 
-    // Initialize coin list
+    // Inisialisasi daftar koin
     filterCoinList();
 
-    // Initialize the portfolio
+    // Inisialisasi portfolio
     renderPortfolio();
   </script>
 </body>

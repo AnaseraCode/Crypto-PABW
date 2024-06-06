@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <link rel="stylesheet" href="/styles.css">
+  <!-- Menambahkan style untuk mengatur tampilan halaman -->
   <style>
     body {  
       background-color: #141E30; 
@@ -13,19 +14,19 @@
     }
     .widget-container {
       display: flex;
-      flex-direction: column; /* Maintain column layout for overall container */
+      flex-direction: column; /* Menjaga tata letak kolom untuk keseluruhan wadah */
       align-items: center;
       padding: 20px;
     }
     .widget-row {
       display: flex;
-      flex-direction: row; /* Change direction to row for horizontal alignment */
-      justify-content: space-between; /* Space out widgets evenly */
+      flex-direction: row; /* Mengubah arah ke baris untuk penataan horizontal */
+      justify-content: space-between; /* Memberi ruang rata antar widget */
       width: 90%;
       margin: 10px 0;
     }
     .widget {
-      width: 48%; /* Adjust width to fit two widgets side by side */
+      width: 48%; /* Menyesuaikan lebar untuk menempatkan dua widget berdampingan */
       margin: 10px 0;
     }
     h1 {
@@ -36,8 +37,8 @@
       padding: 20px;
       background-color: #1E293B;
       border-radius: 8px;
-      width: 90%; /* Control width of the table container */
-      margin: auto; /* Center the container */
+      width: 90%; /* Mengatur lebar kontainer tabel */
+      margin: auto; /* Mencentralisasi kontainer */
     }
     table {
       width: 100%;
@@ -88,6 +89,7 @@
   </style>
 </head>
 <body>
+  <!-- Memasukkan widget marquee dari CoinMarketCap -->
   <script type="text/javascript" src="https://files.coinmarketcap.com/static/widget/coinMarquee.js"></script>
   <div id="coinmarketcap-widget-marquee" coins="1,1027,825,52,5994,74,512" currency="IDR" theme="dark" transparent="false" show-symbol-logo="true"></div>
   <div class="widget-container">
@@ -95,6 +97,7 @@
   </div>
 
   <div class="container">
+    <!-- Membuat form pencarian dan tombol navigasi -->
     <form id="monitorForm" action="/monitor" method="get">
       <div class="search-bar">
         <input type="text" id="search" placeholder="Search for a coin" oninput="searchCoins()">
@@ -105,6 +108,7 @@
       </div>
     </form>
     
+    <!-- Tabel untuk menampilkan data koin -->
     <table>
       <thead>
         <tr>
@@ -125,12 +129,13 @@
             <td><%= coin.symbol %></td>
             <td>Rp<%= (coin.quote.USD.price * 16000).toFixed(2) %></td>
             <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td>
-            <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td>
-            <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td>
+            <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %></td>
+            <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %></td>
           </tr>
         <% }); %>
       </tbody>
     </table>
+    <!-- Tombol navigasi untuk halaman tabel -->
     <div class="pagination">
       <button onclick="window.location.href='/prevPage?start=<%= (currentPage - 1) * 20 + 1 %>'" <%= currentPage === 1 ? 'disabled' : '' %>>Prev Page</button>
       <button onclick="window.location.href='/nextPage?start=<%= currentPage * 20 + 1 %>'">Next Page</button>
@@ -141,6 +146,7 @@
     const coinsData = '<%- JSON.stringify(coins) %>';
     const coins = JSON.parse(coinsData);
 
+    // Fungsi untuk mencari koin berdasarkan input pengguna
     function searchCoins() {
       const searchQuery = document.getElementById('search').value.toLowerCase();
       const filteredCoins = coins.filter(coin =>

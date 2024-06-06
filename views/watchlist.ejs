@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Watchlist</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.css"> <!-- Mengimpor stylesheet eksternal -->
   <style>
+    /* Mengatur tampilan halaman */
     body {
       background-color: #141E30; 
       color: white;
@@ -13,14 +14,14 @@
     }
     .widget-container {
       display: flex;
-      flex-direction: column; /* Maintain column layout for overall container */
+      flex-direction: column; /* Menjaga tata letak kolom untuk keseluruhan wadah */
       align-items: center;
       padding: 20px;
     }
     table {
       width: 90%;
       border-collapse: collapse;
-      margin: auto; /* Center the table */
+      margin: auto; /* Mencentralisasi tabel */
       margin-top: 20px;
       background-color: #1E293B;
       border-radius: 8px;
@@ -35,6 +36,7 @@
     tr:nth-child(even) {
       background-color: #2E3440;
     }
+    /* Mengatur tampilan tombol */
     .button {
       background-color: #4C566A;
       color: white;
@@ -49,8 +51,10 @@
   </style>
 </head>
 <body>
+  <!-- Kontainer utama untuk widget -->
   <div class="widget-container">
     <h1>Watchlist</h1>
+    <!-- Tabel untuk menampilkan daftar watchlist -->
     <table>
       <thead>
         <tr>
@@ -61,7 +65,7 @@
           <th>1h %</th>
           <th>24h %</th>
           <th>7d %</th>
-          <th>Action</th> <!-- New Column for Actions -->
+          <th>Action</th> <!-- Kolom baru untuk aksi -->
         </tr>
       </thead>
       <tbody id="watchlistTableBody">
@@ -75,18 +79,18 @@
                 <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td>
                 <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td>
                 <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td>
-                <td><button class="button" onclick="deleteCoin('<%= coin.symbol %>')">Delete</button></td>
+                <td><button class="button" onclick="deleteCoin('<%= coin.symbol %>')">Delete</button></td> <!-- Tombol hapus koin -->
             </tr>
           <% }); %>
         <% } else { %>
           <tr>
-            <td colspan="8">No coins in watchlist</td>
+            <td colspan="8">No coins in watchlist</td> <!-- Pesan jika tidak ada koin di watchlist -->
           </tr>
         <% } %>
       </tbody>
-      
     </table>
   </div>
+  <!-- Script untuk menghapus koin dari watchlist -->
   <script>
     function deleteCoin(symbol) {
       fetch(`/delete-from-watchlist`, {
@@ -94,13 +98,13 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ symbol: symbol })  // Ensure the symbol is sent in the body
+        body: JSON.stringify({ symbol: symbol })  // Memastikan simbol dikirim dalam body
       })
       .then(response => response.json())
       .then(data => {
         if(data.success) {
           console.log('Coin deleted:', symbol);
-          window.location.reload(); // Refresh the page or remove the row from the table
+          window.location.reload(); // Segarkan halaman atau hapus baris dari tabel
         } else {
           alert('Failed to delete coin from watchlist.');
         }
