@@ -4,34 +4,65 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coin Chart: <%= symbol %></title>
+  <link rel="stylesheet" href="/styles.css"> <!-- Pastikan ini mengarah ke CSS yang tepat -->
   <style>
     body {
       margin: 0;
       padding: 0;
-      background-color: #121212; 
+      background-color: #121212;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     h1 {
-      font-family: 'Poppins', sans-serif; 
-      font-weight: bold; 
-      color: white; 
-      text-align: center; 
+      font-family: 'Poppins', sans-serif;
+      font-weight: bold;
+      color: white;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px; /* Adjust this value as needed */
+    }
+    .button {
+      background-color: #4C566A;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #5E81AC;
     }
     .tradingview-widget-container {
-      width: 100%; 
+      width: 90%; /* Adjust width as needed */
+      margin-top: 20px; /* Space between buttons and chart */
     }
   </style>
 </head>
 <body>
-  <h1>Coin Chart: <%= symbol %></h1> 
+  <h1>Coin Chart: <%= symbol %></h1>
+  
+  <div class="button-container">
+    <!-- Button to Add Coin to Watchlist -->
+    <button class="button" onclick="addToWatchlist('<%= symbol %>')">Add to Watchlist</button>
+    <!-- Button to View Watchlist -->
+    <button class="button" onclick="window.location.href='/watchlist'">View Watchlist</button>
+  </div>
+  
   <div class="tradingview-widget-container">
-    <div class="tradingview-widget-container__widget" style="height: calc(100vh - 72px);"></div>
+    <div class="tradingview-widget-container__widget" style="height: calc(100vh - 130px);"></div>
     <div class="tradingview-widget-copyright">
       <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
         <span class="blue-text"></span>
       </a>
     </div>
   </div>
-  <button class="button" onclick="addToWatchlist('<%= symbol %>')">Add to Watchlist</button>
+
   <script type="text/javascript">
     var symbol = "<%= symbol %>"; 
     var script = document.createElement("script"); 
@@ -56,20 +87,23 @@
 
   <script>
     function addToWatchlist(symbol) {
-      // Implementasi AJAX untuk mengirim simbol ke backend
-      fetch('/addToWatchlist', {
+      fetch(`/add-to-watchlist`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ symbol: symbol })
       })
       .then(response => response.json())
       .then(data => {
-        alert(data.message); // Tampilkan pesan setelah berhasil
+        if (data.success) {
+          alert('Coin added to watchlist!');
+        } else {
+          alert(data.message);  // Tampilkan pesan error dari server
+        }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error adding coin:', error));
     }
-  </script>
+  </script>  
 </body>
 </html>

@@ -89,19 +89,17 @@
   </div>
   <script>
     function deleteCoin(symbol) {
-      fetch('/deleteFromWatchlist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ symbol: symbol })
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data.message); // Log atau tampilkan pesan sukses
-        location.reload(); // Muat ulang halaman untuk menampilkan perubahan
-      })
-      .catch(error => console.error('Error:', error));
+        fetch(`/delete-from-watchlist?symbol=${symbol}`, { method: 'DELETE' })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+            console.log('Coin deleted:', symbol);
+            // Optionally refresh the list or handle the UI update
+            } else {
+            alert('Failed to delete coin from watchlist.');
+            }
+        })
+        .catch(error => console.error('Error deleting coin:', error));
     }
   </script>  
 </body>

@@ -16,6 +16,8 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+let watchlistCoins = []; // Array untuk menyimpan watchlist
+
 async function fetchCoins(start) {
   try {
     start = Math.max(start, 1); // Ensure start is at least 1
@@ -35,18 +37,60 @@ async function fetchCoins(start) {
     throw new Error('Error fetching data from CoinMarketCap API');
   }
 }
+app.post('/add-to-watchlist', bodyParser.json(), async (req, res) => {
+  console.log("Received request to add to watchlist:", req.body); // Tambahkan log ini
+  const { symbol } = req.body;
+  if (!watchlistCoins.some(coin => coin.symbol === symbol)) {
+    try {
+      const response = await axios.get(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest`, {
+        headers: {
+          'X-CMC_PRO_API_KEY': apiKey
+        },
+        params: {
+          symbol: symbol,
+          convert: 'USD'
+        }
+      });
+      const coinData = response.data.data[symbol];
+      const coinDetails = {
+        symbol: symbol,
+        name: coinData.name,
+        quote: {
+          USD: {
+            price: coinData.quote.USD.price,
+            percent_change_1h: coinData.quote.USD.percent_change_1h,
+            percent_change_24h: coinData.quote.USD.percent_change_24h,
+            percent_change_7d: coinData.quote.USD.percent_change_7d
+          }
+        }
+      };
+      watchlistCoins.push(coinDetails);
+      res.json({ success: true, message: "Coin added to watchlist." });
+    } catch (error) {
+      console.error('Failed to fetch coin data:', error);
+      res.status(500).json({ success: false, message: "Failed to fetch coin data." });
+    }
+  } else {
+    res.json({ success: false, message: "Coin already in watchlist." });
+  }
+});
+
+
 
 // Define a route for the watchlist page
 app.get('/watchlist', (req, res) => {
-  // You'll need to provide the data for 'watchlistCoins' from your database or any data source
-  const watchlistCoins = [
-      // Example data structure
-      { name: 'Bitcoin', symbol: 'BTC', quote: { USD: { price: 40000, percent_change_1h: 0.1, percent_change_24h: -0.2, percent_change_7d: 1.5 } } },
-      { name: 'Ethereum', symbol: 'ETH', quote: { USD: { price: 2500, percent_change_1h: 0.3, percent_change_24h: 0.4, percent_change_7d: 2.0 } } }
-  ];
+  res.render('watchlist', { watchlistCoins: watchlistCoins });
+});
 
-  // Render the watchlist page with the coins data
-  res.render('watchlist', { watchlistCoins });
+app.delete('/delete-from-watchlist', bodyParser.json(), async (req, res) => {
+  const { symbol } = req.body;
+  const index = watchlistCoins.findIndex(coin => coin.symbol === symbol);
+  if (index !== -1) {
+    watchlistCoins.splice(index, 1);
+    res.json({ success: true });
+  } else {
+    res.status(404).json({ success: false, message: 'Coin not found in watchlist.' });
+  }
 });
 
 // Route untuk halaman utama dengan pagination
