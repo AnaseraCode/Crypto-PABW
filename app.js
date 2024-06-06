@@ -82,8 +82,8 @@ app.get('/watchlist', (req, res) => {
   res.render('watchlist', { watchlistCoins: watchlistCoins });
 });
 
-app.delete('/delete-from-watchlist', bodyParser.json(), async (req, res) => {
-  const { symbol } = req.body;
+app.delete('/delete-from-watchlist', async (req, res) => {
+  const { symbol } = req.body; // Access symbol from the body
   const index = watchlistCoins.findIndex(coin => coin.symbol === symbol);
   if (index !== -1) {
     watchlistCoins.splice(index, 1);
