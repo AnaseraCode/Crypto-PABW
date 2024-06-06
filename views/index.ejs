@@ -70,7 +70,7 @@
       margin-top: 20px;
     }
     .pagination button {
-      background-color: #900000;
+      background-color: #4C566A;
       color: white;
       padding: 10px 20px;
       border: none;
@@ -79,7 +79,7 @@
       margin: 0 5px;
     }
     .pagination button:disabled {
-      background-color: #310000;
+      background-color: #3B4252;
       cursor: not-allowed;
     }
   </style>
@@ -112,7 +112,6 @@
           <th>1h %</th>
           <th>24h %</th>
           <th>7d %</th>
-          <th>Monitor</th>
         </tr>
       </thead>
       <tbody id="coinTableBody">
@@ -125,7 +124,6 @@
             <td><%= coin.quote.USD.percent_change_1h.toFixed(2) %> %</td>
             <td><%= coin.quote.USD.percent_change_24h.toFixed(2) %> %</td>
             <td><%= coin.quote.USD.percent_change_7d.toFixed(2) %> %</td>
-            <td><input type="checkbox" name="selectedCoins" value="<%= coin.symbol %>"></td>
           </tr>
         <% }); %>
       </tbody>
@@ -160,26 +158,10 @@
           <td>${coin.quote.USD.percent_change_1h.toFixed(2)} %</td>
           <td>${coin.quote.USD.percent_change_24h.toFixed(2)} %</td>
           <td>${coin.quote.USD.percent_change_7d.toFixed(2)} %</td>
-          <td><input type="checkbox" name="selectedCoins" value="${coin.symbol}"></td>
         `;
         coinTableBody.appendChild(row);
       });
     }
-
-    document.getElementById('monitorForm').addEventListener('submit', function(event) {
-      const selectedCoins = Array.from(document.querySelectorAll('input[name="selectedCoins"]:checked'))
-                                .map(input => input.value);
-      if (selectedCoins.length > 6) {
-        event.preventDefault();
-        alert('You can select a maximum of 6 coins.');
-      } else {
-        const hiddenField = document.createElement('input');
-        hiddenField.type = 'hidden';
-        hiddenField.name = 'selectedCoins';
-        hiddenField.value = selectedCoins.join(',');
-        this.appendChild(hiddenField);
-      }
-    });
   </script>  
 </body>
 </html>
